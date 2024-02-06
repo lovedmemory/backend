@@ -1,0 +1,11 @@
+@lovedmemory.webapi_HostAddress = http://localhost:5015
+
+GET {{lovedmemory.webapi_HostAddress}}/todos/
+Accept: application/json
+
+###
+
+GET {{lovedmemory.webapi_HostAddress}}/todos/1
+Accept: application/json
+
+###
