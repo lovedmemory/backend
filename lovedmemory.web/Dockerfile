@@ -12,18 +12,18 @@ RUN apt-get update \
     clang zlib1g-dev
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["lovedmemory.webapi/lovedmemory.webapi.csproj", "lovedmemory.webapi/"]
-RUN dotnet restore "./lovedmemory.webapi/./lovedmemory.webapi.csproj"
+COPY ["lovedmemory.web/lovedmemory.web.csproj", "lovedmemory.web/"]
+RUN dotnet restore "./lovedmemory.web/./lovedmemory.web.csproj"
 COPY . .
-WORKDIR "/src/lovedmemory.webapi"
-RUN dotnet build "./lovedmemory.webapi.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/lovedmemory.web"
+RUN dotnet build "./lovedmemory.web.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./lovedmemory.webapi.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=true
+RUN dotnet publish "./lovedmemory.web.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=true
 
 FROM mcr.microsoft.com/dotnet/runtime-deps:8.0 AS final
 WORKDIR /app
 EXPOSE 8080
 COPY --from=publish /app/publish .
-ENTRYPOINT ["./lovedmemory.webapi"]
+ENTRYPOINT ["./lovedmemory.web"]

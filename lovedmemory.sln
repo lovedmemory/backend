@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34511.84
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "lovedmemory.webapi", "lovedmemory.webapi\lovedmemory.webapi.csproj", "{7C3227C5-20DC-43E3-892F-5B7EB8571B0F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "lovedmemory.infrastructure", "lovedmemory.infrastructure\lovedmemory.infrastructure.csproj", "{86780C98-A539-4EB0-9964-4EA39D2230A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lovedmemory.infrastructure", "lovedmemory.infrastructure\lovedmemory.infrastructure.csproj", "{86780C98-A539-4EB0-9964-4EA39D2230A4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "lovedmemory.domain", "lovedmemory.domain\lovedmemory.domain.csproj", "{EC5078F3-D01F-4C4B-B884-BE0D1C4E2357}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lovedmemory.domain", "lovedmemory.domain\lovedmemory.domain.csproj", "{EC5078F3-D01F-4C4B-B884-BE0D1C4E2357}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "lovedmemory.application", "lovedmemory.application\lovedmemory.application.csproj", "{00B4D417-4D99-481B-A8A4-117348471355}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lovedmemory.application", "lovedmemory.application\lovedmemory.application.csproj", "{00B4D417-4D99-481B-A8A4-117348471355}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lovedmemory.web", "lovedmemory.web\lovedmemory.web.csproj", "{DE704733-1F8D-474C-9F66-EC1458320F61}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{7C3227C5-20DC-43E3-892F-5B7EB8571B0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7C3227C5-20DC-43E3-892F-5B7EB8571B0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7C3227C5-20DC-43E3-892F-5B7EB8571B0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7C3227C5-20DC-43E3-892F-5B7EB8571B0F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{86780C98-A539-4EB0-9964-4EA39D2230A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{86780C98-A539-4EB0-9964-4EA39D2230A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{86780C98-A539-4EB0-9964-4EA39D2230A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -33,6 +29,10 @@ Global
 		{00B4D417-4D99-481B-A8A4-117348471355}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{00B4D417-4D99-481B-A8A4-117348471355}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{00B4D417-4D99-481B-A8A4-117348471355}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE704733-1F8D-474C-9F66-EC1458320F61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE704733-1F8D-474C-9F66-EC1458320F61}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE704733-1F8D-474C-9F66-EC1458320F61}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE704733-1F8D-474C-9F66-EC1458320F61}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

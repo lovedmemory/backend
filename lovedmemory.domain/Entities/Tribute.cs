@@ -1,4 +1,4 @@
-﻿namespace lovedmemory.domain.Entities
+﻿namespace lovedmemory.Domain.Entities
 {
     public class Tribute
     {

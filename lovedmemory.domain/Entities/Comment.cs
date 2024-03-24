@@ -2,7 +2,7 @@
 using System.Xml.Linq;
 using static System.Net.Mime.MediaTypeNames;
 
-namespace lovedmemory.domain.Entities
+namespace lovedmemory.Domain.Entities
 {
     public class Comment
     {

@@ -1,0 +1,97 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using lovedmemory.Application.Common.Interfaces;
+using lovedmemory.Application.Contracts;
+using lovedmemory.Domain.Entities;
+
+namespace lovedmemory.Application.Services
+{
+    public class TributeService : ITributeService
+    {
+        private readonly IAppDbContext _context;
+        private readonly ILogger<TributeService> _logger;
+        public TributeService(IAppDbContext context, ILogger<TributeService> logger)
+        {
+            _context = context;
+            _logger = logger;
+        }
+
+        public async Task<Tribute?> GetTribute(int id, int userId)
+        {
+            var Tribute =  await _context.Tributes.FindAsync(id);
+            return Tribute == null ? null : Tribute;
+        }
+
+        public async Task<IEnumerable<Tribute>?> GetTributes()
+        {
+            var Tributes = await _context.Tributes.ToListAsync();
+            //var Tributes = await _context.Tributes.Where(s => s.Owner ==userId).ToListAsync();
+
+            return Tributes;
+        }
+
+        public async Task<bool?> PostTribute(Tribute Tribute, CancellationToken cancellationToken)
+        {
+            if (_context.Tributes == null)
+            {
+                return null;
+            }
+            _context.Tributes.Add(Tribute);
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return true;
+        }
+
+        public async Task<Tribute?> PutTribute(int id, Tribute Tribute, CancellationToken cancellationToken)
+        {
+            if (Tribute == null || id != Tribute.Id)
+            {
+                return null;
+            }
+
+            try
+            {
+                var existingTribute = await _context.Tributes.FindAsync(new object[] { id }, cancellationToken);
+
+                if (existingTribute == null)
+                {
+                    return null; // Tribute with the given ID not found.
+                }
+
+                _context.Tributes.Entry(existingTribute).CurrentValues.SetValues(Tribute);
+
+                await _context.SaveChangesAsync(cancellationToken);
+
+                return existingTribute;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating Tribute");
+                return null;
+            }
+        }
+
+        public async Task<bool> DeleteTribute(int id, CancellationToken cancellationToken)
+        {
+            if (_context.Tributes == null)
+            {
+                return false;
+            }
+            var Tribute = await _context.Tributes.FindAsync(id);
+            if (Tribute == null)
+            {
+                return true;
+            }
+
+            _context.Tributes.Remove(Tribute);
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return true;
+        }
+
+        public Task<Tribute?> GetTribute(int id)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}

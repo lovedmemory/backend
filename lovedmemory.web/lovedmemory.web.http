@@ -1,0 +1,6 @@
+@lovedmemory.web_HostAddress = http://localhost:5292
+
+GET {{lovedmemory.web_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
