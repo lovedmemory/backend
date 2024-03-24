@@ -1,8 +1,13 @@
-using Microsoft.AspNetCore.Authentication;
+using lovedmemory.Application.Common.Interfaces;
+using lovedmemory.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Identity.Web;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddInfrastructureServices(builder.Configuration);
+builder.Services.AddApplicationServices();
+builder.Services.AddScoped<ICurrentUserService, ICurrentUserService>();
+builder.Services.AddHttpContextAccessor();
 
 // Add services to the container.
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
