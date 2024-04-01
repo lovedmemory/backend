@@ -8,6 +8,6 @@ namespace lovedmemory.Application.Common.Interfaces
         DbSet<Tribute> Tributes { get; set; }
         DbSet<Comment> Comments { get; set; }
         DbSet<EventDetail> EventDetails { get; set; }
-          Task<int> SaveChangesAsync(CancellationToken cancellationToken);   
+        Task<int> SaveChangesAsync(CancellationToken cancellationToken);   
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using lovedmemory.Application.Common.Interfaces;
 using lovedmemory.Application.Contracts;
 using lovedmemory.Domain.Entities;
+using lovedmemory.application.DTOs;
 
 namespace lovedmemory.Application.Services
 {
@@ -10,18 +11,29 @@ namespace lovedmemory.Application.Services
     {
         private readonly IAppDbContext _context;
         private readonly ILogger<TributeService> _logger;
-        public TributeService(IAppDbContext context, ILogger<TributeService> logger)
+        private readonly IDateTime _dateTime;
+        public TributeService(IAppDbContext context, ILogger<TributeService> logger, IDateTime dateTime)
         {
             _context = context;
             _logger = logger;
+            _dateTime = dateTime;
         }
+
 
         public async Task<Tribute?> GetTribute(int id, int userId)
         {
             var Tribute =  await _context.Tributes.FindAsync(id);
             return Tribute == null ? null : Tribute;
         }
+        public Task<Tribute?> GetTribute(int id)
+        {
+            throw new NotImplementedException();
+        }
 
+        public async Task<IEnumerable<Tribute>?> GetMyTributes(int userId)
+        {
+             return await _context.Tributes.Where(t=>t.OwnerId==userId).ToListAsync();
+        }
         public async Task<IEnumerable<Tribute>?> GetTributes()
         {
             var Tributes = await _context.Tributes.ToListAsync();
@@ -30,13 +42,24 @@ namespace lovedmemory.Application.Services
             return Tributes;
         }
 
-        public async Task<bool?> PostTribute(Tribute Tribute, CancellationToken cancellationToken)
+        public async Task<bool> PostTribute(TributeDto tribute, CancellationToken cancellationToken)
         {
             if (_context.Tributes == null)
             {
-                return null;
+                return false;
             }
-            _context.Tributes.Add(Tribute);
+            Tribute _tribute = new()
+            {
+                Active = true,
+                Created = _dateTime.Now,
+                RunDate = _dateTime.Now,
+                Name = tribute.Name,
+                NickName = tribute.NickName,
+                Slug = tribute.Slug,
+                MainImageUrl = tribute.MainImageUrl,
+
+            };
+            _context.Tributes.Add(_tribute);
             await _context.SaveChangesAsync(cancellationToken);
 
             return true;
@@ -89,9 +112,6 @@ namespace lovedmemory.Application.Services
             return true;
         }
 
-        public Task<Tribute?> GetTribute(int id)
-        {
-            throw new NotImplementedException();
-        }
+  
     }
 }

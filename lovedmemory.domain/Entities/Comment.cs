@@ -1,8 +1,4 @@
-﻿using System.ComponentModel.Design;
-using System.Xml.Linq;
-using static System.Net.Mime.MediaTypeNames;
-
-namespace lovedmemory.Domain.Entities
+﻿namespace lovedmemory.Domain.Entities
 {
     public class Comment
     {

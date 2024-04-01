@@ -5,10 +5,8 @@ using lovedmemory.Domain.Entities;
 using lovedmemory.Application.Common.Interfaces;
 namespace lovedmemory.Infrastructure.Data;
 
-public class AppDbContext : IdentityDbContext<AppUser>, IAppDbContext
+public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbContext<AppUser>(options), IAppDbContext
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
-
     public DbSet<Tribute> Tributes { get; set; }
     public DbSet<Comment> Comments { get; set; }
     public DbSet<EventDetail> EventDetails { get; set; }
@@ -16,13 +14,16 @@ public class AppDbContext : IdentityDbContext<AppUser>, IAppDbContext
     {
 
         base.OnModelCreating(builder);
+        builder.HasDefaultSchema("lovedmemory");
+
+
         builder.Entity<Tribute>()
-        .ToTable("tribute", schema: "tributes");
+        .ToTable("tributes", schema: "lovedmemory");
 
-        //builder.Entity<Student>()
-        //.HasOne(s => s.StudentClass)
-        //.WithOne(s => s.Student)
-        //.HasForeignKey<ClassRoomStudent>(c => c.StudentId);
+        builder.Entity<Comment>()
+        .ToTable("comments", schema: "lovedmemory");
 
+        builder.Entity<EventDetail>()
+        .ToTable("eventdetails", schema: "lovedmemory");
     }
 }

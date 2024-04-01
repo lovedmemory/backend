@@ -1,4 +1,7 @@
-﻿using lovedmemory.Application.Common.Interfaces;
+﻿using AutoMapper;
+using lovedmemory.application.DTOs;
+using lovedmemory.Application.Common.Interfaces;
+using lovedmemory.Domain.Entities;
 using lovedmemory.Infrastructure.Data;
 using lovedmemory.Infrastructure.Identity;
 using lovedmemory.Infrastructure.Services;
@@ -7,7 +10,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-namespace lovedmemory.Infrastructure;
+
+namespace schoolapp.Infrastructure;
+
 public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
@@ -24,16 +29,17 @@ public static class DependencyInjection
             services.AddDbContext<AppDbContext>((sp, options) =>
             {
                 options.AddInterceptors(sp.GetServices<ISaveChangesInterceptor>());
-                options.UseNpgsql("Host=localhost;Database=schooldb;Username=postgres;Password=Muthuri24;");
+                options.UseNpgsql(connectionString);
 
-//#if (UseSQLite)
-//            options.UseSqlite(connectionString);
-//#else
-//                options.UseSqlServer(connectionString);
-//#endif
+                //#if (UseSQLite)
+                //            options.UseSqlite(connectionString);
+                //#else
+                //                options.UseSqlServer(connectionString);
+                //#endif
             });
 
             services.AddScoped<IAppDbContext, AppDbContext>();
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<Tribute, TributeDto>());
 
             //services.AddScoped<ApplicationDbContextInitialiser>();
 

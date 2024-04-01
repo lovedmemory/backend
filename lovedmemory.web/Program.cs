@@ -1,12 +1,13 @@
 using lovedmemory.Application.Common.Interfaces;
-using lovedmemory.Infrastructure;
+using lovedmemory.web.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Identity.Web;
+using schoolapp.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddApplicationServices();
-builder.Services.AddScoped<ICurrentUserService, ICurrentUserService>();
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddHttpContextAccessor();
 
 // Add services to the container.

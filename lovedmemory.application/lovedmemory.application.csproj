@@ -13,8 +13,5 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\lovedmemory.Domain\lovedmemory.Domain.csproj" />
 	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="DTOs\" />
-	</ItemGroup>
 
 </Project>
