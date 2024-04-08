@@ -2,6 +2,7 @@
 using lovedmemory.application.DTOs;
 using lovedmemory.Application.Common.Interfaces;
 using lovedmemory.Domain.Entities;
+using lovedmemory.infrastructure.Security.Auth;
 using lovedmemory.Infrastructure.Data;
 using lovedmemory.Infrastructure.Identity;
 using lovedmemory.Infrastructure.Services;
@@ -39,6 +40,8 @@ public static class DependencyInjection
             });
 
             services.AddScoped<IAppDbContext, AppDbContext>();
+            services.AddScoped<IAuthService, AuthService>();
+
             var config = new MapperConfiguration(cfg => cfg.CreateMap<Tribute, TributeDto>());
 
             //services.AddScoped<ApplicationDbContextInitialiser>();

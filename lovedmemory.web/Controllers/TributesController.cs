@@ -9,7 +9,7 @@ using System.Net;
 
 namespace lovedmemory.web.Controllers
 {
-    [Authorize]
+    [Authorize(Permissions = "CanViewTributes", Roles = "Manager, Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class TributesController : ControllerBase

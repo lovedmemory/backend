@@ -1,7 +1,7 @@
 namespace lovedmemory.infrastructure.Security.CurrentUserProvider;
 
 public record CurrentUser(
-    Guid Id,
+    string Id,
     string FirstName,
     string LastName,
     string Email,

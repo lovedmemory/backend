@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace lovedmemory.infrastructure.Security.CurrentUserProvider;
 
-public class CurrentUserProvider(IHttpContextAccessor _httpContextAccessor) : ICurrentUserProvider
+public class UserService(IHttpContextAccessor _httpContextAccessor) : IUserService
 {
     public CurrentUser GetCurrentUser()
     {
@@ -12,11 +12,13 @@ public class CurrentUserProvider(IHttpContextAccessor _httpContextAccessor) : IC
         {
             throw new Exception();
         }
-        //ThrowIfNull();
 
-        var id = Guid.Parse(GetSingleClaimValue("id"));
+        var id = GetSingleClaimValue("id");
+        //var id = Guid.Parse(GetSingleClaimValue("id"));
+
         var permissions = GetClaimValues("permissions");
         var roles = GetClaimValues(ClaimTypes.Role);
+       // var policies = GetClaimValues(ClaimTypes.)
         var firstName = GetSingleClaimValue(JwtRegisteredClaimNames.Name);
         var lastName = GetSingleClaimValue(ClaimTypes.Surname);
         var email = GetSingleClaimValue(ClaimTypes.Email);

@@ -1,6 +1,6 @@
 namespace lovedmemory.infrastructure.Security.CurrentUserProvider;
 
-public interface ICurrentUserProvider
+public interface IUserService
 {
     CurrentUser GetCurrentUser();
 }
