@@ -2,24 +2,32 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using lovedmemory.application.Common.Interfaces;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace lovedmemory.infrastructure.Security.TokenGenerator;
 
-public class JwtTokenGenerator(IOptions<JwtSettings> jwtOptions) : IJwtTokenGenerator
+public class JwtTokenGenerator : IJwtTokenGenerator
 {
-    private readonly JwtSettings _jwtSettings = jwtOptions.Value;
+    private readonly JwtSettings _jwtSettings;
+
+    public JwtTokenGenerator(IOptions<JwtSettings> jwtSettings)
+    {
+        _jwtSettings = jwtSettings.Value;
+    }
 
     public string GenerateToken(
-        Guid id,
+        string id,
         string firstName,
         string lastName,
-        string email,
-        List<string> permissions,
-        List<string> roles)
+        string email
+        //List<string?> permissions,
+        //List<string?> roles
+        )
     {
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Secret));
+
+       var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Secret));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var claims = new List<Claim>
@@ -30,14 +38,14 @@ public class JwtTokenGenerator(IOptions<JwtSettings> jwtOptions) : IJwtTokenGene
             new("id", id.ToString()),
         };
 
-        roles.ForEach(role => claims.Add(new(ClaimTypes.Role, role)));
-        permissions.ForEach(permission => claims.Add(new("permissions", permission)));
+        //roles.ForEach(role => claims.Add(new(ClaimTypes.Role, role)));
+        //permissions.ForEach(permission => claims.Add(new("permissions", permission)));
 
         var token = new JwtSecurityToken(
-            _jwtSettings.Issuer,
-            _jwtSettings.Audience,
+             _jwtSettings.Issuer,
+             _jwtSettings.Audience,
             claims,
-            expires: DateTime.UtcNow.AddMinutes(_jwtSettings.TokenExpirationInMinutes),
+            expires: DateTime.UtcNow.AddMinutes(60),
             signingCredentials: credentials);
 
         return new JwtSecurityTokenHandler().WriteToken(token);

@@ -24,6 +24,5 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <Folder Include="Migrations\" />
-	  <Folder Include="Persistence\Configurations\" />
 	</ItemGroup>
 </Project>

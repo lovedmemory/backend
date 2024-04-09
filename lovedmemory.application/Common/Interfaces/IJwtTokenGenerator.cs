@@ -4,10 +4,11 @@ namespace lovedmemory.application.Common.Interfaces;
 public interface IJwtTokenGenerator
 {
     string GenerateToken(
-        Guid id,
+        string id,
         string firstName,
         string lastName,
-        string email,
-        List<string> permissions,
-        List<string> roles);
+        string email
+        //List<string?> permissions,
+        //List<string?> roles
+        );
 }

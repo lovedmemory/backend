@@ -1,11 +1,16 @@
 ﻿using AutoMapper;
+using lovedmemory.application.Common.Interfaces;
 using lovedmemory.application.DTOs;
 using lovedmemory.Application.Common.Interfaces;
 using lovedmemory.Domain.Entities;
 using lovedmemory.infrastructure.Security.Auth;
+using lovedmemory.infrastructure.Security.RoleService;
+using lovedmemory.infrastructure.Security.TokenGenerator;
+using lovedmemory.infrastructure.Security.TokenValidation;
 using lovedmemory.Infrastructure.Data;
 using lovedmemory.Infrastructure.Identity;
 using lovedmemory.Infrastructure.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -21,7 +26,7 @@ public static class DependencyInjection
         try
         {
             var connectionString = configuration.GetConnectionString("DefaultConnection");
-
+            services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
             //Guard.Against.Null(connectionString, message: "Connection string 'DefaultConnection' not found.");
 
             //services.AddScoped<ISaveChangesInterceptor, AuditableEntityInterceptor>();
@@ -41,7 +46,11 @@ public static class DependencyInjection
 
             services.AddScoped<IAppDbContext, AppDbContext>();
             services.AddScoped<IAuthService, AuthService>();
-
+            services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
+            services
+                .ConfigureOptions<JwtBearerTokenValidationConfiguration>()
+                .AddAuthentication(defaultScheme: JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer();
             var config = new MapperConfiguration(cfg => cfg.CreateMap<Tribute, TributeDto>());
 
             //services.AddScoped<ApplicationDbContextInitialiser>();
@@ -63,9 +72,13 @@ public static class DependencyInjection
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<AppDbContext>();
 #endif
+            services.AddScoped<UserManager<AppUser>>();
+            services.AddTransient<IIdentityService, IdentityService>();
+
+            services.AddScoped<IRoleService,  RoleService>();
+            //services.AddScoped<RoleManager<IdentityRole>>();
 
             services.AddSingleton<IDateTime, DateTimeService>();
-            services.AddTransient<IIdentityService, IdentityService>();
 
             //services.AddAuthorization(options =>
             //    options.AddPolicy(Policies.CanPurge, policy => policy.RequireRole(Roles.Administrator)));
