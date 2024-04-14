@@ -1,4 +1,4 @@
-﻿namespace lovedmemory.Application.Common.Security;
+﻿namespace lovedmemory.application.Common.Security;
 
 /// <summary>
 /// Specifies the class this attribute is applied to requires authorization.

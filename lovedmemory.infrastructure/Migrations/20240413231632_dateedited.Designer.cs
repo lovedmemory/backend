@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using lovedmemory.Infrastructure.Data;
@@ -11,9 +12,11 @@ using lovedmemory.Infrastructure.Data;
 namespace lovedmemory.infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240413231632_dateedited")]
+    partial class dateedited
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -196,10 +199,6 @@ namespace lovedmemory.infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("CommentId")
-                        .HasColumnType("integer")
-                        .HasColumnName("commentid");
-
                     b.Property<DateTime>("DateEdited")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("dateedited");
@@ -232,7 +231,7 @@ namespace lovedmemory.infrastructure.Migrations
                     b.HasKey("Id")
                         .HasName("pk_comments");
 
-                    b.HasIndex("CommentId");
+                    b.HasIndex("ParentCommentId");
 
                     b.HasIndex("TributeId");
 
@@ -488,17 +487,21 @@ namespace lovedmemory.infrastructure.Migrations
 
             modelBuilder.Entity("lovedmemory.Domain.Entities.Comment", b =>
                 {
-                    b.HasOne("lovedmemory.Domain.Entities.Comment", null)
+                    b.HasOne("lovedmemory.Domain.Entities.Comment", "ParentComment")
                         .WithMany("Replies")
-                        .HasForeignKey("CommentId")
-                        .HasConstraintName("fk_comments_comments_commentid");
+                        .HasForeignKey("ParentCommentId")
+                        .HasConstraintName("fk_comments_comments_parentcommentid");
 
-                    b.HasOne("lovedmemory.Domain.Entities.Tribute", null)
+                    b.HasOne("lovedmemory.Domain.Entities.Tribute", "Tribute")
                         .WithMany("Comments")
                         .HasForeignKey("TributeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_comments_tributes_tributeid");
+
+                    b.Navigation("ParentComment");
+
+                    b.Navigation("Tribute");
                 });
 
             modelBuilder.Entity("lovedmemory.Domain.Entities.Comment", b =>

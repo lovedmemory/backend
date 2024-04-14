@@ -1,12 +1,11 @@
 ﻿using lovedmemory.application.DTOs;
 using lovedmemory.infrastructure.Security.Auth;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AuthenticationApi.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("[controller]")]
 public class UserController : ControllerBase

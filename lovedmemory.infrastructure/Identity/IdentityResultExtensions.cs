@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using lovedmemory.Application.Common.Models;
+using lovedmemory.application.Common.Models;
 using lovedmemory.Infrastructure.Identity;
 
-namespace lovedmemory.Application.Identity;
+namespace lovedmemory.application.Identity;
 
 public static class IdentityResultExtensions
 {

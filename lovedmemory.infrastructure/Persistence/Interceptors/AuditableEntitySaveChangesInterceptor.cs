@@ -1,4 +1,4 @@
-﻿using lovedmemory.Application.Common.Interfaces;
+﻿using lovedmemory.application.Common.Interfaces;
 using lovedmemory.Domain.Common;
 using lovedmemory.infrastructure.Security.CurrentUserProvider;
 using Microsoft.EntityFrameworkCore;

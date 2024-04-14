@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using lovedmemory.Application.Common.Interfaces;
+using lovedmemory.application.Common.Interfaces;
 using lovedmemory.Domain.Common;
 using lovedmemory.infrastructure.Security.CurrentUserProvider;
 

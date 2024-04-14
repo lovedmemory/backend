@@ -7,10 +7,14 @@
         public string Details { get; set; }
         public bool Visible { get; set; } = true;
         public DateTime DatePosted { get; set; }
-        public List<Comment> Replies { get; set; }
+        public bool Edited { get; set; }
+        public DateTime DateEdited { get; set; }
+        public int? ParentCommentId { get; set; }
+        public virtual List<Comment> Replies { get; set; }
+
         public Comment()
         {
-            Replies = new List<Comment>();
+            Replies = [];
         }
 
         public void AddReply(Comment reply)
@@ -29,6 +33,5 @@
                 reply.Display(level + 1);
             }
         }
-        public virtual Tribute Tribute { get; set; }
     }
 }

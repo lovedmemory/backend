@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using lovedmemory.Application.Common.Interfaces;
-using lovedmemory.Application.Common.Models;
+using lovedmemory.application.Common.Interfaces;
+using lovedmemory.application.Common.Models;
 
 namespace lovedmemory.Infrastructure.Identity;
 

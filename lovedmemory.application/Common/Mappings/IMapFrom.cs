@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 
-namespace lovedmemory.Application.Common.Mappings;
+namespace lovedmemory.application.Common.Mappings;
 
 public interface IMapFrom<T>
 {

@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using lovedmemory.Application.Common.Interfaces;
-using lovedmemory.Application.Contracts;
+using lovedmemory.application.Common.Interfaces;
+using lovedmemory.application.Contracts;
 using lovedmemory.Domain.Entities;
 using lovedmemory.application.DTOs;
 
-namespace lovedmemory.Application.Services
+namespace lovedmemory.application.Services
 {
     public class TributeService : ITributeService
     {
@@ -22,24 +22,36 @@ namespace lovedmemory.Application.Services
 
         public async Task<Tribute?> GetTribute(int id, int userId)
         {
-            var Tribute =  await _context.Tributes.FindAsync(id);
-            return Tribute == null ? null : Tribute;
+            var tribute = await _context.Tributes
+            .Include(t => t.Comments)
+            .ThenInclude(c => c.Replies)
+            .SingleOrDefaultAsync(t => t.Id == id);
+            return tribute;
         }
-        public Task<Tribute?> GetTribute(int id)
+        public async Task<Tribute?> GetTribute(int id)
         {
-            throw new NotImplementedException();
+            var tribute = await _context.Tributes
+    .Include(t => t.Comments)
+    .ThenInclude(c => c.Replies)
+    .SingleOrDefaultAsync(t => t.Id == id);
+            return tribute;
         }
 
-        public async Task<IEnumerable<Tribute>?> GetMyTributes(int userId)
+        public async Task<IEnumerable<Tribute>?> GetMyTributes(string userId)
         {
-             return await _context.Tributes.Where(t=>t.OwnerId==userId).ToListAsync();
+            return await _context.Tributes
+                .Where(t => t.OwnerId == userId)
+                .Include(t => t.Comments)
+                .ThenInclude(c => c.Replies)
+                .ToListAsync();
         }
         public async Task<IEnumerable<Tribute>?> GetTributes()
         {
-            var Tributes = await _context.Tributes.ToListAsync();
-            //var Tributes = await _context.Tributes.Where(s => s.Owner ==userId).ToListAsync();
-
-            return Tributes;
+            var tributes = await _context.Tributes
+           .Include(t => t.Comments)
+           .ThenInclude(c => c.Replies)
+           .ToListAsync();
+            return tributes;
         }
 
         public async Task<bool> PostTribute(TributeDto tribute, CancellationToken cancellationToken)
@@ -100,7 +112,7 @@ namespace lovedmemory.Application.Services
             {
                 return false;
             }
-            var Tribute = await _context.Tributes.FindAsync(id);
+            var Tribute = await _context.Tributes.FindAsync(id, cancellationToken);
             if (Tribute == null)
             {
                 return true;

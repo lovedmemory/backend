@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using lovedmemory.application.Common.Interfaces;
 using lovedmemory.application.DTOs;
-using lovedmemory.Application.Common.Interfaces;
+using lovedmemory.application.Common.Interfaces;
 using lovedmemory.Domain.Entities;
 using lovedmemory.infrastructure.Security.Auth;
 using lovedmemory.infrastructure.Security.RoleService;

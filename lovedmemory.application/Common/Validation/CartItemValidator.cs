@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using lovedmemory.Domain.Entities;
 
-namespace lovedmemory.Application.Common.Validation;
+namespace lovedmemory.application.Common.Validation;
 public class CategoryValidator : AbstractValidator<Tribute>
 {
     public CategoryValidator()

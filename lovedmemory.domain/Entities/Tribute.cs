@@ -7,12 +7,12 @@
         public string Name { get; set; }
         public string NickName { get; set; }
         public string Slug { get; set; }
-        public int OwnerId { get; set; }
+        public string OwnerId { get; set; }
         public string MainImageUrl { get; set; }
         public DateTime Edited { get; set; }
         public DateTime Created { get; set; }
         public DateTime RunDate { get; set; }
         public bool Active { get; set; }
-        public ICollection<Comment> Comments { get; set; }
+        public virtual ICollection<Comment> Comments { get; set; }
     }
 }

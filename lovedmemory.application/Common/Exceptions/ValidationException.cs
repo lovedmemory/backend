@@ -1,6 +1,6 @@
 ﻿using FluentValidation.Results;
 
-namespace lovedmemory.Application.Common.Exceptions;
+namespace lovedmemory.application.Common.Exceptions;
 
 public class ValidationException : Exception
 {

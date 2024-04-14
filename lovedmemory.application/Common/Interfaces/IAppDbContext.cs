@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using lovedmemory.Domain.Entities;
 
-namespace lovedmemory.Application.Common.Interfaces
+namespace lovedmemory.application.Common.Interfaces
 {
     public interface IAppDbContext
     {

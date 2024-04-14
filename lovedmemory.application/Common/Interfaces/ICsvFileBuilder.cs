@@ -1,5 +1,5 @@
 ﻿
-namespace lovedmemory.Application.Common.Interfaces;
+namespace lovedmemory.application.Common.Interfaces;
 
 public interface ICsvFileBuilder
 {

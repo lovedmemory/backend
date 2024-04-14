@@ -1,4 +1,4 @@
-﻿using lovedmemory.Application.Common.Interfaces;
+﻿using lovedmemory.application.Common.Interfaces;
 
 namespace lovedmemory.Infrastructure.Services;
 

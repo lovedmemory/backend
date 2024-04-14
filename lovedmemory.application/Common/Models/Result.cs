@@ -1,4 +1,4 @@
-﻿namespace lovedmemory.Application.Common.Models
+﻿namespace lovedmemory.application.Common.Models
 {
     public class Result<T>
     {

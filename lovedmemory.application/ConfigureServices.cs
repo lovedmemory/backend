@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using FluentValidation;
-using lovedmemory.Application.Contracts;
-using lovedmemory.Application.Services;
+using lovedmemory.application.Contracts;
+using lovedmemory.application.Services;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -12,7 +12,7 @@ public static class ConfigureServices
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
         services.AddScoped<ITributeService, TributeService>();
-
+        services.AddScoped<ICommentService, CommentService>();
         return services;
     }
 }

@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using lovedmemory.Infrastructure.Identity;
 using lovedmemory.Domain.Entities;
-using lovedmemory.Application.Common.Interfaces;
+using lovedmemory.application.Common.Interfaces;
 using System.Reflection.Emit;
 namespace lovedmemory.Infrastructure.Data;
 
@@ -48,6 +48,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
         .ToTable("comments", schema: "lovedmemory");
 
         builder.Entity<EventDetail>()
-        .ToTable("eventdetails", schema: "lovedmemory");
+        .ToTable("eventdetails", schema: "lovedmemory");  
     }
 }

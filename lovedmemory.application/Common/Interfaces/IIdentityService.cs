@@ -1,6 +1,6 @@
-﻿using lovedmemory.Application.Common.Models;
+﻿using lovedmemory.application.Common.Models;
 
-namespace lovedmemory.Application.Common.Interfaces;
+namespace lovedmemory.application.Common.Interfaces;
 
 public interface IIdentityService
 {

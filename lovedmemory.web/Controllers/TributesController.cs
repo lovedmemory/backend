@@ -1,6 +1,6 @@
 ﻿using lovedmemory.application.Common.Security.Request;
 using lovedmemory.application.DTOs;
-using lovedmemory.Application.Contracts;
+using lovedmemory.application.Contracts;
 using lovedmemory.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -30,7 +30,7 @@ namespace lovedmemory.web.Controllers
         }
         // GET: api/<TributesController>
         [HttpGet("mytributes/{userId}")]
-        public async Task<IEnumerable<Tribute>> GetMyTributes(int userId)
+        public async Task<IEnumerable<Tribute>> GetMyTributes(string userId)
         {
             return await _tributeService.GetMyTributes(userId);
         }
