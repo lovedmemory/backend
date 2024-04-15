@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using lovedmemory.Infrastructure.Identity;
-using lovedmemory.Domain.Entities;
+using lovedmemory.domain.Entities;
 using lovedmemory.application.Common.Interfaces;
 using System.Reflection.Emit;
 namespace lovedmemory.Infrastructure.Data;

@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using lovedmemory.application.Common.Interfaces;
 using lovedmemory.application.Contracts;
-using lovedmemory.Domain.Entities;
+using lovedmemory.domain.Entities;
 using lovedmemory.application.DTOs;
 
 namespace lovedmemory.application.Services

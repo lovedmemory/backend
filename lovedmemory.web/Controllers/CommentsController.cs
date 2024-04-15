@@ -1,7 +1,7 @@
 ﻿using lovedmemory.application.Common.Security.Request;
 using lovedmemory.application.Contracts;
 using lovedmemory.application.DTOs;
-using lovedmemory.Domain.Entities;
+using lovedmemory.domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 

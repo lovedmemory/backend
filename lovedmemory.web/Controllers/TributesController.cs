@@ -1,17 +1,16 @@
 ﻿using lovedmemory.application.Common.Security.Request;
 using lovedmemory.application.DTOs;
 using lovedmemory.application.Contracts;
-using lovedmemory.Domain.Entities;
+using lovedmemory.domain.Entities;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace lovedmemory.web.Controllers
 {
     //[Authorize(Permissions = "CanViewTributes", Roles = "Manager, Admin")]
-    [Authorize(Roles = "Manager, Admin")]
-
+   // [Authorize(Roles = "Manager, Admin")]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class TributesController : ControllerBase

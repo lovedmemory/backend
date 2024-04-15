@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using lovedmemory.application.Common.Interfaces;
-using lovedmemory.Domain.Entities;
+using lovedmemory.domain.Entities;
 using lovedmemory.application.DTOs;
 using lovedmemory.application.Contracts;
 

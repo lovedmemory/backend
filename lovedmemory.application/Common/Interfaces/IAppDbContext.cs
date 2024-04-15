@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using lovedmemory.Domain.Entities;
+using lovedmemory.domain.Entities;
 
 namespace lovedmemory.application.Common.Interfaces
 {

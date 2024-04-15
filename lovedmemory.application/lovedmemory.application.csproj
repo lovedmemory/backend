@@ -12,7 +12,13 @@
 		<PackageReference Include="Throw" Version="1.4.0" />
 	</ItemGroup>
 	<ItemGroup>
-	  <ProjectReference Include="..\lovedmemory.Domain\lovedmemory.Domain.csproj" />
+	  <ProjectReference Include="..\lovedmemory.domain\lovedmemory.domain.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+	  <EditorConfigFiles Remove="C:\Users\user\Desktop\dev\New folder\loved_memory\backend\lovedmemory.application\.editorconfig" />
+	</ItemGroup>
+	<ItemGroup>
+	  <None Include="C:\Users\user\Desktop\dev\New folder\loved_memory\backend\lovedmemory.application\.editorconfig" />
 	</ItemGroup>
 
 </Project>

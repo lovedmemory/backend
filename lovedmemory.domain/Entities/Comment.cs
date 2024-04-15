@@ -1,4 +1,4 @@
-﻿namespace lovedmemory.Domain.Entities
+﻿namespace lovedmemory.domain.Entities
 {
     public class Comment
     {

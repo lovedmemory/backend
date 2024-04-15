@@ -1,5 +1,5 @@
 ﻿using lovedmemory.application.DTOs;
-using lovedmemory.Domain.Entities;
+using lovedmemory.domain.Entities;
 
 namespace lovedmemory.application.Contracts
 {

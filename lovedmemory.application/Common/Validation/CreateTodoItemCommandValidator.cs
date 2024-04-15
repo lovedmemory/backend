@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using lovedmemory.Domain.Entities;
+using lovedmemory.domain.Entities;
 
 namespace lovedmemory.application.Common.Validation;
 

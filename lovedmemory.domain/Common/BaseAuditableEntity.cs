@@ -1,4 +1,4 @@
-﻿namespace lovedmemory.Domain.Common;
+﻿namespace lovedmemory.domain.Common;
 
 public abstract class BaseAuditableEntity 
 {

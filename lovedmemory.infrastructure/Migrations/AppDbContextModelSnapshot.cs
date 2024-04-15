@@ -187,7 +187,7 @@ namespace lovedmemory.infrastructure.Migrations
                     b.ToTable("aspnetusertokens", "lovedmemory");
                 });
 
-            modelBuilder.Entity("lovedmemory.Domain.Entities.Comment", b =>
+            modelBuilder.Entity("lovedmemory.domain.Entities.Comment", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -239,7 +239,7 @@ namespace lovedmemory.infrastructure.Migrations
                     b.ToTable("comments", "lovedmemory");
                 });
 
-            modelBuilder.Entity("lovedmemory.Domain.Entities.EventDetail", b =>
+            modelBuilder.Entity("lovedmemory.domain.Entities.EventDetail", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -272,7 +272,7 @@ namespace lovedmemory.infrastructure.Migrations
                     b.ToTable("eventdetails", "lovedmemory");
                 });
 
-            modelBuilder.Entity("lovedmemory.Domain.Entities.Tribute", b =>
+            modelBuilder.Entity("lovedmemory.domain.Entities.Tribute", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -486,14 +486,14 @@ namespace lovedmemory.infrastructure.Migrations
                         .HasConstraintName("fk_aspnetusertokens_aspnetusers_userid");
                 });
 
-            modelBuilder.Entity("lovedmemory.Domain.Entities.Comment", b =>
+            modelBuilder.Entity("lovedmemory.domain.Entities.Comment", b =>
                 {
-                    b.HasOne("lovedmemory.Domain.Entities.Comment", null)
+                    b.HasOne("lovedmemory.domain.Entities.Comment", null)
                         .WithMany("Replies")
                         .HasForeignKey("CommentId")
                         .HasConstraintName("fk_comments_comments_commentid");
 
-                    b.HasOne("lovedmemory.Domain.Entities.Tribute", null)
+                    b.HasOne("lovedmemory.domain.Entities.Tribute", null)
                         .WithMany("Comments")
                         .HasForeignKey("TributeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -501,12 +501,12 @@ namespace lovedmemory.infrastructure.Migrations
                         .HasConstraintName("fk_comments_tributes_tributeid");
                 });
 
-            modelBuilder.Entity("lovedmemory.Domain.Entities.Comment", b =>
+            modelBuilder.Entity("lovedmemory.domain.Entities.Comment", b =>
                 {
                     b.Navigation("Replies");
                 });
 
-            modelBuilder.Entity("lovedmemory.Domain.Entities.Tribute", b =>
+            modelBuilder.Entity("lovedmemory.domain.Entities.Tribute", b =>
                 {
                     b.Navigation("Comments");
                 });

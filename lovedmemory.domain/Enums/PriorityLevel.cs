@@ -1,4 +1,4 @@
-﻿namespace lovedmemory.Domain.Enums;
+﻿namespace lovedmemory.domain.Enums;
 
 public enum PriorityLevel
 {

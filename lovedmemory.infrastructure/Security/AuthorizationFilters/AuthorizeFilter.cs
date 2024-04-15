@@ -60,7 +60,7 @@ namespace lovedmemory.infrastructure.Security.AuthorizationFilters
                     // Check roles
                     if (!string.IsNullOrEmpty(authorizeAttribute.Roles) && !HasRole(userId, authorizeAttribute.Roles))
                     {
-                        context.Result = new ForbidResult();
+                        context.Result = new UnauthorizedResult();
                         return;
                     }
 
@@ -74,7 +74,7 @@ namespace lovedmemory.infrastructure.Security.AuthorizationFilters
                 }
                 catch (Exception ex)
                 {
-                    context.Result = new ForbidResult();
+                    context.Result = new UnauthorizedResult();
                     return;
                 }
             }

@@ -1,6 +1,6 @@
 ﻿using lovedmemory.domain.Exceptions;
 
-namespace lovedmemory.Domain.ValueObjects;
+namespace lovedmemory.domain.ValueObjects;
 
 public class Colour 
 {

@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using lovedmemory.application.Common.Interfaces;
-using lovedmemory.Domain.Common;
+using lovedmemory.domain.Common;
 using lovedmemory.infrastructure.Security.CurrentUserProvider;
 
 namespace lovedmemory.Infrastructure.Data.Interceptors;
