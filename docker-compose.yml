@@ -9,13 +9,13 @@ services:
       dockerfile: lovedmemory.web/Dockerfile
     container_name: lovedmemory_api
     depends_on:
-      - db
+      - lovedmemory.db
     networks:
       - app-network
     environment:
     - DB_CONNECTION_STRING=Database=lovedmemorydb;User Id=postgres;Password=Muthuri24;
 
-  db:
+  lovedmemory.db:
     build:
       context: .
       dockerfile: database/Dockerfile

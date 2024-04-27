@@ -47,22 +47,22 @@ public class AuthService : IAuthService
             throw new ArgumentException($"Unable to register user {string.Concat(request.Firstname, " ", request.Lastname)} errors: {GetErrorsText(result.Errors)}");
         }
 
-        return await Login(new LoginDto { Username = request.Email, Password = request.Password });
+        return await Login(new LoginDto { Email = request.Email, Password = request.Password });
     }
 
     public async Task<string> Login(LoginDto request)
     {
-        var user = await _userManager.FindByNameAsync(request.Username);
+        var user = await _userManager.FindByNameAsync(request.Email);
        
 
         if (user is null)
         {
-            user = await _userManager.FindByEmailAsync(request.Username);
+            user = await _userManager.FindByEmailAsync(request.Email);
         }
 
         if (user is null || !await _userManager.CheckPasswordAsync(user, request.Password))
         {
-            throw new ArgumentException($"Unable to authenticate user {request.Username}");
+            throw new  ArgumentException($"Unable to authenticate user {request.Email}");
         }        
 
         var token =  _tokenGenerator.GenerateToken(user.Id, user.FirstName,user.LastName,user.Email);

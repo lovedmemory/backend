@@ -7,12 +7,12 @@ namespace AuthenticationApi.Controllers;
 
 [Authorize]
 [ApiController]
-[Route("[controller]")]
-public class UserController : ControllerBase
+[Route("api/[controller]")]
+public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
 
-    public UserController(IAuthService authenticationService)
+    public AuthController(IAuthService authenticationService)
     {
         _authService = authenticationService;
     }
@@ -24,9 +24,18 @@ public class UserController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Login([FromBody] LoginDto request)
     {
-        var response = await _authService.Login(request);
 
-        return Ok(response);
+        try
+        {
+            var response = await _authService.Login(request);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            //_logg
+            return Unauthorized();
+        }
+
     }
 
     [AllowAnonymous]

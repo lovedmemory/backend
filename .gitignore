@@ -364,3 +364,4 @@ FodyWeavers.xsd
 
 #postgres-data
 pgdata-data
+/pgdat-data

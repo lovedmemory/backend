@@ -12,8 +12,8 @@ using lovedmemory.Infrastructure.Data;
 namespace lovedmemory.infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240413223257_comments")]
-    partial class comments
+    [Migration("20240422150621_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -190,6 +190,103 @@ namespace lovedmemory.infrastructure.Migrations
                     b.ToTable("aspnetusertokens", "lovedmemory");
                 });
 
+            modelBuilder.Entity("lovedmemory.Infrastructure.Identity.AppUser", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text")
+                        .HasColumnName("id");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("integer")
+                        .HasColumnName("accessfailedcount");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("text")
+                        .HasColumnName("concurrencystamp");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("email");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("boolean")
+                        .HasColumnName("emailconfirmed");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("firstname");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("text")
+                        .HasColumnName("lastname");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("boolean")
+                        .HasColumnName("lockoutenabled");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("lockoutend");
+
+                    b.Property<string>("NickName")
+                        .HasColumnType("text")
+                        .HasColumnName("nickname");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("normalizedemail");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("normalizedusername");
+
+                    b.Property<string>("OtherName")
+                        .HasColumnType("text")
+                        .HasColumnName("othername");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("text")
+                        .HasColumnName("passwordhash");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("text")
+                        .HasColumnName("phonenumber");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("boolean")
+                        .HasColumnName("phonenumberconfirmed");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("text")
+                        .HasColumnName("securitystamp");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("boolean")
+                        .HasColumnName("twofactorenabled");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("username");
+
+                    b.HasKey("Id")
+                        .HasName("pk_aspnetusers");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex");
+
+                    b.ToTable("aspnetusers", "lovedmemory");
+                });
+
             modelBuilder.Entity("lovedmemory.domain.Entities.Comment", b =>
                 {
                     b.Property<int>("Id")
@@ -199,6 +296,14 @@ namespace lovedmemory.infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("CommentId")
+                        .HasColumnType("integer")
+                        .HasColumnName("commentid");
+
+                    b.Property<DateTime>("DateEdited")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("dateedited");
+
                     b.Property<DateTime>("DatePosted")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("dateposted");
@@ -207,6 +312,10 @@ namespace lovedmemory.infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("details");
+
+                    b.Property<bool>("Edited")
+                        .HasColumnType("boolean")
+                        .HasColumnName("edited");
 
                     b.Property<int?>("ParentCommentId")
                         .HasColumnType("integer")
@@ -223,7 +332,7 @@ namespace lovedmemory.infrastructure.Migrations
                     b.HasKey("Id")
                         .HasName("pk_comments");
 
-                    b.HasIndex("ParentCommentId");
+                    b.HasIndex("CommentId");
 
                     b.HasIndex("TributeId");
 
@@ -323,103 +432,6 @@ namespace lovedmemory.infrastructure.Migrations
                     b.ToTable("tributes", "lovedmemory");
                 });
 
-            modelBuilder.Entity("lovedmemory.Infrastructure.Identity.AppUser", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text")
-                        .HasColumnName("id");
-
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("integer")
-                        .HasColumnName("accessfailedcount");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("text")
-                        .HasColumnName("concurrencystamp");
-
-                    b.Property<string>("Email")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
-                        .HasColumnName("email");
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("boolean")
-                        .HasColumnName("emailconfirmed");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("firstname");
-
-                    b.Property<string>("LastName")
-                        .HasColumnType("text")
-                        .HasColumnName("lastname");
-
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("boolean")
-                        .HasColumnName("lockoutenabled");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("lockoutend");
-
-                    b.Property<string>("NickName")
-                        .HasColumnType("text")
-                        .HasColumnName("nickname");
-
-                    b.Property<string>("NormalizedEmail")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
-                        .HasColumnName("normalizedemail");
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
-                        .HasColumnName("normalizedusername");
-
-                    b.Property<string>("OtherName")
-                        .HasColumnType("text")
-                        .HasColumnName("othername");
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("text")
-                        .HasColumnName("passwordhash");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("text")
-                        .HasColumnName("phonenumber");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("boolean")
-                        .HasColumnName("phonenumberconfirmed");
-
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("text")
-                        .HasColumnName("securitystamp");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("boolean")
-                        .HasColumnName("twofactorenabled");
-
-                    b.Property<string>("UserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
-                        .HasColumnName("username");
-
-                    b.HasKey("Id")
-                        .HasName("pk_aspnetusers");
-
-                    b.HasIndex("NormalizedEmail")
-                        .HasDatabaseName("EmailIndex");
-
-                    b.HasIndex("NormalizedUserName")
-                        .IsUnique()
-                        .HasDatabaseName("UserNameIndex");
-
-                    b.ToTable("aspnetusers", "lovedmemory");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -479,21 +491,17 @@ namespace lovedmemory.infrastructure.Migrations
 
             modelBuilder.Entity("lovedmemory.domain.Entities.Comment", b =>
                 {
-                    b.HasOne("lovedmemory.domain.Entities.Comment", "ParentComment")
+                    b.HasOne("lovedmemory.domain.Entities.Comment", null)
                         .WithMany("Replies")
-                        .HasForeignKey("ParentCommentId")
-                        .HasConstraintName("fk_comments_comments_parentcommentid");
+                        .HasForeignKey("CommentId")
+                        .HasConstraintName("fk_comments_comments_commentid");
 
-                    b.HasOne("lovedmemory.domain.Entities.Tribute", "Tribute")
+                    b.HasOne("lovedmemory.domain.Entities.Tribute", null)
                         .WithMany("Comments")
                         .HasForeignKey("TributeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_comments_tributes_tributeid");
-
-                    b.Navigation("ParentComment");
-
-                    b.Navigation("Tribute");
                 });
 
             modelBuilder.Entity("lovedmemory.domain.Entities.Comment", b =>

@@ -38,7 +38,13 @@ builder.Services.AddSwaggerGen(opt =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-
+app.UseCors(options => options
+       .AllowAnyHeader()
+       .AllowAnyMethod()
+       .SetIsOriginAllowed(hostName => true)
+       .AllowCredentials()
+       .SetPreflightMaxAge(TimeSpan.FromSeconds(86400))
+   );
 app.UseSwagger();
 app.UseSwaggerUI();
 
