@@ -1,11 +1,9 @@
 ﻿using lovedmemory.application.Common.Interfaces;
 using lovedmemory.application.DTOs;
 using lovedmemory.infrastructure.Identity;
-using lovedmemory.infrastructure.Security.TokenGenerator;
 using lovedmemory.Infrastructure.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Options;
 
 namespace lovedmemory.infrastructure.Security.Auth;
 
@@ -20,7 +18,7 @@ public class AuthService : IAuthService
         _tokenGenerator = tokenGenerator;
     }
 
-    public async Task<string> Register(RegisterDto request)
+    public async Task<UserDto> Register(RegisterDto request)
     {
         var userByEmail = await _userManager.FindByEmailAsync(request.Email);
         //var userByUsername = await _userManager.FindByNameAsync(request.Username);
@@ -50,15 +48,12 @@ public class AuthService : IAuthService
         return await Login(new LoginDto { Email = request.Email, Password = request.Password });
     }
 
-    public async Task<string> Login(LoginDto request)
+    public async Task<UserDto> Login(LoginDto request)
     {
         var user = await _userManager.FindByNameAsync(request.Email);
        
 
-        if (user is null)
-        {
-            user = await _userManager.FindByEmailAsync(request.Email);
-        }
+        user ??= await _userManager.FindByEmailAsync(request.Email);
 
         if (user is null || !await _userManager.CheckPasswordAsync(user, request.Password))
         {
@@ -67,7 +62,7 @@ public class AuthService : IAuthService
 
         var token =  _tokenGenerator.GenerateToken(user.Id, user.FirstName,user.LastName,user.Email);
 
-        return token;
+        return new UserDto { AccessToken=token, User=user};
     }
 
     public string GetTokenFromRequest(HttpRequest request)

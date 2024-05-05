@@ -16,6 +16,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using lovedmemory.Infrastructure.Persistence.Interceptors;
+using lovedmemory.infrastructure.Security.CurrentUserProvider;
 
 namespace schoolapp.Infrastructure;
 
@@ -29,12 +31,13 @@ public static class DependencyInjection
             services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
             //Guard.Against.Null(connectionString, message: "Connection string 'DefaultConnection' not found.");
 
-            //services.AddScoped<ISaveChangesInterceptor, AuditableEntityInterceptor>();
+            services.AddScoped<IUserProvider, UserProvider>();
+          services.AddScoped<ISaveChangesInterceptor, AuditableEntitySaveChangesInterceptor>();
 
 
             services.AddDbContext<AppDbContext>((sp, options) =>
             {
-                options.AddInterceptors(sp.GetServices<ISaveChangesInterceptor>());
+               options.AddInterceptors(sp.GetServices<ISaveChangesInterceptor>());
                 options.UseNpgsql(connectionString);
 
                 //#if (UseSQLite)

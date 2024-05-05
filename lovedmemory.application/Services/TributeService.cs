@@ -40,7 +40,7 @@ namespace lovedmemory.application.Services
         public async Task<IEnumerable<Tribute>?> GetMyTributes(string userId)
         {
             return await _context.Tributes
-                .Where(t => t.OwnerId == userId)
+                .Where(t => t.CreatedBy == userId)
                 .Include(t => t.Comments)
                 .ThenInclude(c => c.Replies)
                 .ToListAsync();

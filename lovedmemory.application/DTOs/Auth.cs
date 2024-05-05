@@ -21,4 +21,5 @@ namespace lovedmemory.application.DTOs
         [Required]
         public string? Password { get; set; }
     }
+
 }

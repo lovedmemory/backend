@@ -9,15 +9,14 @@ namespace lovedmemory.Infrastructure.Persistence.Interceptors;
 
 public class AuditableEntitySaveChangesInterceptor : SaveChangesInterceptor
 {
-    private readonly IUserService _userService;
+    private readonly IUserProvider _userProvider;
     private readonly IDateTime _dateTime;
 
     public AuditableEntitySaveChangesInterceptor(
-        IUserService currentUserService,
-        IDateTime dateTime)
+        IDateTime dateTime, IUserProvider userProvider)
     {
-        _userService = currentUserService;
         _dateTime = dateTime;
+        _userProvider = userProvider;
     }
 
     public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
@@ -42,13 +41,13 @@ public class AuditableEntitySaveChangesInterceptor : SaveChangesInterceptor
         {
             if (entry.State == EntityState.Added)
             {
-                entry.Entity.CreatedBy = _userService.GetCurrentUser().Id;
+                entry.Entity.CreatedBy = _userProvider.GetCurrentUser().Id;
                 entry.Entity.Created = _dateTime.Now;
             } 
 
             if (entry.State == EntityState.Added || entry.State == EntityState.Modified || entry.HasChangedOwnedEntities())
             {
-                entry.Entity.LastModifiedBy = _userService.GetCurrentUser().Id;
+                entry.Entity.LastModifiedBy = _userProvider.GetCurrentUser().Id;
                 entry.Entity.LastModified = _dateTime.Now;
             }
         }

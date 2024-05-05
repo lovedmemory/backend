@@ -15,14 +15,14 @@ namespace lovedmemory.infrastructure.Security.AuthorizationFilters
 {
     public class AuthorizationFilter : IAuthorizationFilter
     {
-        private readonly IUserService _userService;
+        private readonly IUserProvider _userProvider;
         private readonly IRoleService _roleService;
 
         private readonly IHttpContextAccessor _context;
         private readonly JwtSettings _jwtSettings;
-        public AuthorizationFilter(IUserService userService, IHttpContextAccessor httpContextAccessor, IOptions<JwtSettings> jwtSettings, IRoleService roleService)
+        public AuthorizationFilter(IUserProvider userProvider, IHttpContextAccessor httpContextAccessor, IOptions<JwtSettings> jwtSettings, IRoleService roleService)
         {
-            _userService = userService;
+            _userProvider = userProvider;
             _context = httpContextAccessor;
             _jwtSettings = jwtSettings.Value;
             _roleService = roleService;
@@ -137,7 +137,7 @@ namespace lovedmemory.infrastructure.Security.AuthorizationFilters
             var userRoles = _roleService.GetUserRolesAsync(userId);
 
             // Get the user's permissions from the UserService
-            var userPermissions = _userService.GetCurrentUser().Permissions;
+            var userPermissions = _userProvider.GetCurrentUser().Permissions;
 
             // Check if the user has the required permissions
             return permissions.Split(',')

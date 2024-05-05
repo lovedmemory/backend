@@ -11,10 +11,11 @@ namespace AuthenticationApi.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
-
-    public AuthController(IAuthService authenticationService)
+    private readonly ILogger<AuthController> _logger;
+    public AuthController(IAuthService authenticationService, ILogger<AuthController> logger)
     {
         _authService = authenticationService;
+        _logger = logger;
     }
 
     [AllowAnonymous]
@@ -32,7 +33,7 @@ public class AuthController : ControllerBase
         }
         catch (Exception ex)
         {
-            //_logg
+            _logger.LogError(ex, "Error Logging in {user}",request.ToString());
             return Unauthorized();
         }
 

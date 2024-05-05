@@ -1,6 +1,10 @@
+
 namespace lovedmemory.infrastructure.Security.CurrentUserProvider;
 
 public interface IUserService
 {
-    CurrentUser GetCurrentUser();
+    Task<bool> AssignRoleToUserAsync(string userId, string roleName);
+    Task<bool> CreateRoleAsync(string roleName);
+    Task<IEnumerable<string>> GetRolesAsync();
+    Task<IEnumerable<string>> GetUserRolesAsync(string userId);
 }

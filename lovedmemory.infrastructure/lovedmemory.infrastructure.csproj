@@ -23,6 +23,7 @@
 	  <ProjectReference Include="..\lovedmemory.application\lovedmemory.application.csproj" />
 	</ItemGroup>
 	<ItemGroup>
+	  <Folder Include="Data\Interceptors\" />
 	  <Folder Include="Migrations\" />
 	</ItemGroup>
 </Project>
