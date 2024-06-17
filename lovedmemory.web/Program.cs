@@ -1,6 +1,7 @@
 using lovedmemory.infrastructure.Security.AuthorizationFilters;
 using lovedmemory.infrastructure.Security.CurrentUserProvider;
 using lovedmemory.web.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.OpenApi.Models;
 using schoolapp.Infrastructure;
 
@@ -39,7 +40,12 @@ builder.Services.AddSwaggerGen(opt =>
     opt.OperationFilter<AuthenticationRequirementsOperationFilter>();
 });
 
-
+builder.Services.AddAuthorization(options =>
+{
+    options.FallbackPolicy = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build();
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -32,13 +32,15 @@ namespace lovedmemory.application.Services
               {
                   Id = t.Id,
                   Name = t.Name,
+                  Description= t.Description,
+                  Title = t.Title,
                   RunDate = t.RunDate,
                   Created = t.Created,
                   Active = t.Active,
                   MainImageUrl = t.MainImageUrl,
                   ViewCount = t.ViewCount,
                   AuthorName = t.CreatedByUser.FullName,
-                  AuthorEmail = t.CreatedByUser.Email,
+                  AuthorEmail = t.CreatedByUser.Email!,
                   Comments = t.Comments.Select(c => new Comment
                   {
                       Id = c.Id,
@@ -145,7 +147,9 @@ namespace lovedmemory.application.Services
                 Active = true,
                 Created = _dateTime.Now,
                 RunDate = _dateTime.Now,
-                Name = tribute.Name,
+                Name = tribute.TributeName,
+                Title = tribute.Title,
+                Description = tribute.Description,
                 NickName = tribute.NickName,
                 Slug = tribute.Slug,
                 MainImageUrl = tribute.MainImageUrl,

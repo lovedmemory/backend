@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Duende.IdentityServer.Extensions;
+using Microsoft.AspNetCore.Http;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -19,18 +20,20 @@ namespace lovedmemory.infrastructure.Security.CurrentUserProvider
             {
                 throw new Exception();
             }
+            if (_httpContextAccessor.HttpContext.User?.IsAuthenticated()==false)
+            {
+                throw new Exception();
+            }
 
-            var id = GetSingleClaimValue("id");
-            //var id = Guid.Parse(GetSingleClaimValue("id"));
-
+            string id = GetSingleClaimValue(ClaimTypes.NameIdentifier);
             var permissions = GetClaimValues("permissions");
             var roles = GetClaimValues(ClaimTypes.Role);
             // var policies = GetClaimValues(ClaimTypes.)
             var firstName = GetSingleClaimValue(JwtRegisteredClaimNames.Name);
-            var lastName = GetSingleClaimValue(ClaimTypes.Surname);
+            
             var email = GetSingleClaimValue(ClaimTypes.Email);
 
-            return new CurrentUser(id, firstName, lastName, email, permissions, roles);
+            return new CurrentUser(id, firstName, "", email, permissions, roles);
         }
 
         private List<string> GetClaimValues(string claimType) =>
