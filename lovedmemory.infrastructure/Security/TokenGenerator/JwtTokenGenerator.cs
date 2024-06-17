@@ -2,7 +2,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using lovedmemory.application.Common.Interfaces;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
@@ -32,9 +31,9 @@ public class JwtTokenGenerator : IJwtTokenGenerator
 
         var claims = new List<Claim>
         {
-            new(JwtRegisteredClaimNames.Name, firstName),
-            new(JwtRegisteredClaimNames.FamilyName, lastName),
+            new(JwtRegisteredClaimNames.Name, $"{lastName} ${firstName}"),//user name
             new(JwtRegisteredClaimNames.Email, email),
+            new(JwtRegisteredClaimNames.NameId, id),
             new("id", id.ToString()),
         };
 
@@ -45,7 +44,7 @@ public class JwtTokenGenerator : IJwtTokenGenerator
              _jwtSettings.Issuer,
              _jwtSettings.Audience,
             claims,
-            expires: DateTime.UtcNow.AddMinutes(60),
+            expires: DateTime.Now.AddMinutes(60),
             signingCredentials: credentials);
 
         return new JwtSecurityTokenHandler().WriteToken(token);

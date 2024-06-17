@@ -4,5 +4,5 @@ namespace lovedmemory.Infrastructure.Services;
 
 public class DateTimeService : IDateTime
 {
-    public DateTime Now => DateTime.UtcNow;
+    public DateTimeOffset Now => DateTimeOffset.UtcNow;
 }

@@ -1,16 +1,16 @@
-﻿namespace lovedmemory.domain.Entities
+﻿using lovedmemory.domain.Common;
+
+namespace lovedmemory.domain.Entities
 {
-    public class Comment
+    public class Comment : BaseAuditableEntity
     {
         public int Id { get; set; }
         public int TributeId { get; set; }
         public string Details { get; set; }
         public bool Visible { get; set; } = true;
-        public DateTime DatePosted { get; set; }
         public bool Edited { get; set; }
-        public DateTime DateEdited { get; set; }
         public int? ParentCommentId { get; set; }
-        public virtual List<Comment> Replies { get; set; }
+        public virtual IList<Comment> Replies { get; set; }=new List<Comment>();
 
         public Comment()
         {
@@ -24,9 +24,6 @@
         public void Display(int level = 0)
         {
             string indentation = new string(' ', level * 2);
-            //Console.WriteLine($"{indentation}Comment ID: {CommentId}");
-            //Console.WriteLine($"{indentation}Text: {Text}");
-            //Console.WriteLine($"{indentation}Date Posted: {DatePosted}");
 
             foreach (var reply in Replies)
             {

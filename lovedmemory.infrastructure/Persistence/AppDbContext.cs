@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using lovedmemory.Infrastructure.Identity;
 using lovedmemory.domain.Entities;
 using lovedmemory.application.Common.Interfaces;
-using System.Reflection.Emit;
 namespace lovedmemory.Infrastructure.Data;
 
 public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbContext<AppUser>(options), IAppDbContext
@@ -48,6 +46,12 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
         .ToTable("comments", schema: "lovedmemory");
 
         builder.Entity<EventDetail>()
-        .ToTable("eventdetails", schema: "lovedmemory");  
+        .ToTable("eventdetails", schema: "lovedmemory");
+
+        builder.Entity<Tribute>()
+         .HasOne(t => t.CreatedByUser)
+         .WithMany()
+         .HasForeignKey(t => t.CreatedByUserId)
+         .OnDelete(DeleteBehavior.Restrict);
     }
 }

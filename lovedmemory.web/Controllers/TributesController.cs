@@ -23,13 +23,13 @@ namespace lovedmemory.web.Controllers
         }
         // GET: api/<TributesController>
         [HttpGet]
-        public async Task<IEnumerable<Tribute>> Get()
+        public async Task<IEnumerable<TributeDto>> Get()
         {
             return await _tributeService.GetTributes();
         }
         // GET: api/<TributesController>
         [HttpGet("mytributes/{userId}")]
-        public async Task<IEnumerable<Tribute>> GetMyTributes(string userId)
+        public async Task<IEnumerable<TributeDto>> GetMyTributes(string userId)
         {
             return await _tributeService.GetMyTributes(userId);
         }
@@ -42,7 +42,7 @@ namespace lovedmemory.web.Controllers
 
         // POST api/<TributesController>
         [HttpPost]
-        public async Task<IActionResult> Post(TributeDto tribute)
+        public async Task<IActionResult> Post(CreateTributeDto tribute)
         {
             bool created =  await _tributeService.PostTribute(tribute, cancellationToken);
             if (created)

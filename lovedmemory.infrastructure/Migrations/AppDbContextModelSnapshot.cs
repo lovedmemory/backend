@@ -18,7 +18,7 @@ namespace lovedmemory.infrastructure.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("lovedmemory")
-                .HasAnnotation("ProductVersion", "8.0.3")
+                .HasAnnotation("ProductVersion", "8.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -187,7 +187,7 @@ namespace lovedmemory.infrastructure.Migrations
                     b.ToTable("aspnetusertokens", "lovedmemory");
                 });
 
-            modelBuilder.Entity("lovedmemory.Infrastructure.Identity.AppUser", b =>
+            modelBuilder.Entity("lovedmemory.domain.Entities.AppUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("text")
@@ -297,13 +297,14 @@ namespace lovedmemory.infrastructure.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("commentid");
 
-                    b.Property<DateTime>("DateEdited")
+                    b.Property<DateTimeOffset>("Created")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("dateedited");
+                        .HasColumnName("created");
 
-                    b.Property<DateTime>("DatePosted")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("dateposted");
+                    b.Property<string>("CreatedByUserId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("createdbyuserid");
 
                     b.Property<string>("Details")
                         .IsRequired()
@@ -313,6 +314,14 @@ namespace lovedmemory.infrastructure.Migrations
                     b.Property<bool>("Edited")
                         .HasColumnType("boolean")
                         .HasColumnName("edited");
+
+                    b.Property<DateTimeOffset?>("LastModified")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("lastmodified");
+
+                    b.Property<string>("LastModifiedByUserId")
+                        .HasColumnType("text")
+                        .HasColumnName("lastmodifiedbyuserid");
 
                     b.Property<int?>("ParentCommentId")
                         .HasColumnType("integer")
@@ -350,7 +359,7 @@ namespace lovedmemory.infrastructure.Migrations
                         .HasColumnType("text")
                         .HasColumnName("details");
 
-                    b.Property<DateTime>("EventDate")
+                    b.Property<DateTimeOffset>("EventDate")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("eventdate");
 
@@ -382,26 +391,26 @@ namespace lovedmemory.infrastructure.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("active");
 
-                    b.Property<DateTime>("Created")
+                    b.Property<DateTimeOffset>("Created")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created");
 
-                    b.Property<string>("CreatedBy")
+                    b.Property<string>("CreatedByUserId")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("createdby");
+                        .HasColumnName("createdbyuserid");
 
-                    b.Property<DateTime>("Edited")
+                    b.Property<DateTimeOffset>("Edited")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("edited");
 
-                    b.Property<DateTime?>("LastModified")
+                    b.Property<DateTimeOffset?>("LastModified")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("lastmodified");
 
-                    b.Property<string>("LastModifiedBy")
+                    b.Property<string>("LastModifiedByUserId")
                         .HasColumnType("text")
-                        .HasColumnName("lastmodifiedby");
+                        .HasColumnName("lastmodifiedbyuserid");
 
                     b.Property<string>("MainImageUrl")
                         .IsRequired()
@@ -418,7 +427,7 @@ namespace lovedmemory.infrastructure.Migrations
                         .HasColumnType("text")
                         .HasColumnName("nickname");
 
-                    b.Property<DateTime>("RunDate")
+                    b.Property<DateTimeOffset>("RunDate")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("rundate");
 
@@ -433,6 +442,8 @@ namespace lovedmemory.infrastructure.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_tributes");
+
+                    b.HasIndex("CreatedByUserId");
 
                     b.ToTable("tributes", "lovedmemory");
                 });
@@ -449,7 +460,7 @@ namespace lovedmemory.infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("lovedmemory.Infrastructure.Identity.AppUser", null)
+                    b.HasOne("lovedmemory.domain.Entities.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -459,7 +470,7 @@ namespace lovedmemory.infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("lovedmemory.Infrastructure.Identity.AppUser", null)
+                    b.HasOne("lovedmemory.domain.Entities.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -476,7 +487,7 @@ namespace lovedmemory.infrastructure.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_aspnetuserroles_aspnetroles_roleid");
 
-                    b.HasOne("lovedmemory.Infrastructure.Identity.AppUser", null)
+                    b.HasOne("lovedmemory.domain.Entities.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -486,7 +497,7 @@ namespace lovedmemory.infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("lovedmemory.Infrastructure.Identity.AppUser", null)
+                    b.HasOne("lovedmemory.domain.Entities.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -507,6 +518,17 @@ namespace lovedmemory.infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_comments_tributes_tributeid");
+                });
+
+            modelBuilder.Entity("lovedmemory.domain.Entities.Tribute", b =>
+                {
+                    b.HasOne("lovedmemory.domain.Entities.AppUser", "CreatedByUser")
+                        .WithMany()
+                        .HasForeignKey("CreatedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("CreatedByUser");
                 });
 
             modelBuilder.Entity("lovedmemory.domain.Entities.Comment", b =>

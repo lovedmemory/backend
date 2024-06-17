@@ -1,4 +1,4 @@
-﻿using lovedmemory.Infrastructure.Identity;
+﻿using lovedmemory.domain.Entities;
 using Microsoft.AspNetCore.Identity;
 
 namespace lovedmemory.infrastructure.Security.RoleService;

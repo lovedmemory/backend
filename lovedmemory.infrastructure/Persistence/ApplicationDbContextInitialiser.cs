@@ -1,8 +1,8 @@
-﻿using lovedmemory.Infrastructure.Identity;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using lovedmemory.Infrastructure.Data;
+using lovedmemory.domain.Entities;
 
 namespace lovedmemory.Infrastructure.Persistence;
 

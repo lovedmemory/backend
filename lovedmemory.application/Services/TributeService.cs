@@ -20,7 +20,37 @@ namespace lovedmemory.application.Services
         }
 
 
-        public async Task<Tribute?> GetTribute(int id, int userId)
+        public async Task<TributeDto?> GetTribute(int id, string userId)
+        {
+            var tribute = await _context.Tributes
+              .Where(t => t.CreatedByUserId == userId && t.Id == id)
+                            .Include(t => t.CreatedByUser)
+
+              .Include(t => t.Comments)
+              .ThenInclude(c => c.Replies)
+              .Select(t => new TributeDto
+              {
+                  Id = t.Id,
+                  Name = t.Name,
+                  RunDate = t.RunDate,
+                  Created = t.Created,
+                  Active = t.Active,
+                  MainImageUrl = t.MainImageUrl,
+                  ViewCount = t.ViewCount,
+                  AuthorName = t.CreatedByUser.FullName,
+                  AuthorEmail = t.CreatedByUser.Email,
+                  Comments = t.Comments.Select(c => new Comment
+                  {
+                      Id = c.Id,
+                      Details = c.Details,
+                      Created = c.Created,
+                      CreatedByUserId = c.CreatedByUserId,
+                      Replies = GetAllReplies(c.Replies).ToList()
+                  }).ToList()
+              }).FirstOrDefaultAsync();
+            return tribute;
+        }
+        public async Task<Tribute?> GetTribute(int id)
         {
             var tribute = await _context.Tributes
             .Include(t => t.Comments)
@@ -28,33 +58,83 @@ namespace lovedmemory.application.Services
             .SingleOrDefaultAsync(t => t.Id == id);
             return tribute;
         }
-        public async Task<Tribute?> GetTribute(int id)
-        {
-            var tribute = await _context.Tributes
-    .Include(t => t.Comments)
-    .ThenInclude(c => c.Replies)
-    .SingleOrDefaultAsync(t => t.Id == id);
-            return tribute;
-        }
 
-        public async Task<IEnumerable<Tribute>?> GetMyTributes(string userId)
+        public async Task<IEnumerable<TributeDto>?> GetMyTributes(string userId)
         {
             return await _context.Tributes
-                .Where(t => t.CreatedBy == userId)
-                .Include(t => t.Comments)
-                .ThenInclude(c => c.Replies)
-                .ToListAsync();
+              .Where(t => t.CreatedByUserId == userId)
+              .Include(t => t.Comments)
+              .ThenInclude(c => c.Replies)
+              .Select(t => new TributeDto
+              {
+                  Id = t.Id,
+                  Name = t.Name,
+                  RunDate = t.RunDate,
+                  Created = t.Created,
+                  Active = t.Active,
+                  MainImageUrl = t.MainImageUrl,
+                  ViewCount = t.ViewCount,
+                  AuthorName = t.CreatedByUser.FullName,
+                  AuthorEmail = t.CreatedByUser.Email,
+                  Comments = t.Comments.Select(c => new Comment
+                  {
+                      Id = c.Id,
+                      Details = c.Details,
+                      Created = c.Created,
+                      CreatedByUserId = c.CreatedByUserId,
+                      Replies = GetAllReplies(c.Replies).ToList()
+                  }).ToList()
+              })
+              .ToListAsync();
+
+
         }
-        public async Task<IEnumerable<Tribute>?> GetTributes()
+        // Helper function to retrieve all replies recursively
+        private static IEnumerable<Comment> GetAllReplies(IEnumerable<Comment> replies)
         {
-            var tributes = await _context.Tributes
-           .Include(t => t.Comments)
-           .ThenInclude(c => c.Replies)
-           .ToListAsync();
-            return tributes;
+            foreach (var reply in replies)
+            {
+                yield return new Comment
+                {
+                    Id = reply.Id,
+                    Details = reply.Details,
+                    Created = reply.Created,
+                    CreatedByUserId = reply.CreatedByUserId,
+                    Replies = GetAllReplies(reply.Replies).ToList()
+                };
+            }
+        }
+        public async Task<IEnumerable<TributeDto>?> GetTributes()
+        {
+            return await _context.Tributes
+         .Where(t => t.Active == true)
+         .Include(t => t.CreatedByUser)
+         .Include(t => t.Comments)
+         .ThenInclude(c => c.Replies)
+         .Select(t => new TributeDto
+         {
+             Id = t.Id,
+             Name = t.Name,
+             RunDate = t.RunDate,
+             Created = t.Created,
+             Active = t.Active,
+             MainImageUrl = t.MainImageUrl,
+             ViewCount = t.ViewCount,
+             AuthorName = t.CreatedByUser.FullName,
+             AuthorEmail = t.CreatedByUser.Email,
+             Comments = t.Comments.Select(c => new Comment
+             {
+                 Id = c.Id,
+                 Details = c.Details,
+                 Created = c.Created,
+                 CreatedByUserId = c.CreatedByUserId,
+                 Replies = GetAllReplies(c.Replies).ToList()
+             }).ToList()
+         })
+         .ToListAsync();
         }
 
-        public async Task<bool> PostTribute(TributeDto tribute, CancellationToken cancellationToken)
+        public async Task<bool> PostTribute(CreateTributeDto tribute, CancellationToken cancellationToken)
         {
             if (_context.Tributes == null)
             {
@@ -86,7 +166,7 @@ namespace lovedmemory.application.Services
 
             try
             {
-                var existingTribute = await _context.Tributes.FindAsync(new object[] { id }, cancellationToken);
+                var existingTribute = await _context.Tributes.FindAsync([id], cancellationToken);
 
                 if (existingTribute == null)
                 {
@@ -124,6 +204,6 @@ namespace lovedmemory.application.Services
             return true;
         }
 
-  
+
     }
 }

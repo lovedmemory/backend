@@ -1,4 +1,6 @@
-﻿namespace lovedmemory.application.DTOs
+﻿using lovedmemory.domain.Entities;
+
+namespace lovedmemory.application.DTOs
 {
     public class TributeDto
     {
@@ -8,7 +10,18 @@
         public string NickName { get; set; }
         public string Slug { get; set; }
         public string MainImageUrl { get; set; }
-        public DateTime RunDate { get; set; }
+        public DateTimeOffset Created { get; set; }
+        public DateTimeOffset RunDate { get; set; }
         public bool? Active { get; set; }
+        public IList<Comment> Comments { get; set; }
+        public string AuthorName { get; set; }
+        public string AuthorEmail { get; set; }
+    }
+    public class CreateTributeDto
+    {
+        public string Name { get; set; }
+        public string NickName { get; set; }
+        public string Slug { get; set; }
+        public string MainImageUrl { get; set; }
     }
 }

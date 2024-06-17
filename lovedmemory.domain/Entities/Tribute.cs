@@ -10,10 +10,10 @@ namespace lovedmemory.domain.Entities
         public string NickName { get; set; }
         public string Slug { get; set; }
         public string MainImageUrl { get; set; }
-        public DateTime Edited { get; set; }
-        public DateTime Created { get; set; }
-        public DateTime RunDate { get; set; }
+        public DateTimeOffset Edited { get; set; }
+        public DateTimeOffset Created { get; set; }
+        public DateTimeOffset RunDate { get; set; }
         public bool Active { get; set; }
-        public virtual ICollection<Comment> Comments { get; set; }
+        public virtual IList<Comment> Comments { get; set; } = new List<Comment>();
     }
 }

@@ -1,10 +1,10 @@
-﻿using lovedmemory.Infrastructure.Identity;
+﻿using lovedmemory.application.DTOs;
 
 namespace lovedmemory.infrastructure.Identity
 {
     public class UserDto
     {
-        public AppUser User { get; set; }
-        public string AccessToken { get; set; }
+        public AppUserDto User { get; set; }
+        public string Token { get; set; }
     }
 }

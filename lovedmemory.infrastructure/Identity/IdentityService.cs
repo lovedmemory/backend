@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using lovedmemory.application.Common.Interfaces;
 using lovedmemory.application.Common.Models;
+using lovedmemory.domain.Entities;
 
 namespace lovedmemory.Infrastructure.Identity;
 

@@ -28,7 +28,6 @@ namespace lovedmemory.application.Services
                 }
                 Comment _Comment = new()
                 {
-                    DatePosted = _dateTime.Now,
                     Details = Comment.Details,
                     ParentCommentId = Comment.ParentCommentId,
                     TributeId = Comment.TributeId,
@@ -64,7 +63,6 @@ namespace lovedmemory.application.Services
                 Comment updatedComment = new()
                 {
                     Edited = true,
-                    DateEdited = _dateTime.Now,
                     Details = Comment.Details,
                     ParentCommentId = Comment.ParentCommentId,
                     TributeId = Comment.Id,

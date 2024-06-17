@@ -5,6 +5,11 @@ using Microsoft.OpenApi.Models;
 using schoolapp.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.WebHost.ConfigureKestrel(opts =>
+{
+    opts.ListenAnyIP(5000); 
+
+});
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddApplicationServices();
 builder.Services.AddScoped<IUserService, UserService>();
@@ -54,7 +59,7 @@ app.UseSwaggerUI();
 //    app.UseSwaggerUI();
 //}
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseAuthorization();
 

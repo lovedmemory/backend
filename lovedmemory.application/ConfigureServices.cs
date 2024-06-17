@@ -9,8 +9,8 @@ public static class ConfigureServices
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
-        services.AddAutoMapper(Assembly.GetExecutingAssembly());
-        services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+        //services.AddAutoMapper(Assembly.GetExecutingAssembly());
+       // services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
         services.AddScoped<ITributeService, TributeService>();
         services.AddScoped<ICommentService, CommentService>();
         return services;

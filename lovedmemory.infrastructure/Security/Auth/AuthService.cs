@@ -1,7 +1,7 @@
 ﻿using lovedmemory.application.Common.Interfaces;
 using lovedmemory.application.DTOs;
+using lovedmemory.domain.Entities;
 using lovedmemory.infrastructure.Identity;
-using lovedmemory.Infrastructure.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 
@@ -62,7 +62,7 @@ public class AuthService : IAuthService
 
         var token =  _tokenGenerator.GenerateToken(user.Id, user.FirstName,user.LastName,user.Email);
 
-        return new UserDto { AccessToken=token, User=user};
+        return new UserDto { Token=token, User=new AppUserDto() {Email=user.Email, Name= user.FullName, Phone=user.PhoneNumber,NickName=user.NickName} };
     }
 
     public string GetTokenFromRequest(HttpRequest request)

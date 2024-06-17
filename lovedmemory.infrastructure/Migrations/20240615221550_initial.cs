@@ -68,36 +68,13 @@ namespace lovedmemory.infrastructure.Migrations
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     tributeid = table.Column<int>(type: "integer", nullable: false),
-                    eventdate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    eventdate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     eventlocation = table.Column<string>(type: "text", nullable: false),
                     details = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_eventdetails", x => x.id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "tributes",
-                schema: "lovedmemory",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    viewcount = table.Column<int>(type: "integer", nullable: false),
-                    name = table.Column<string>(type: "text", nullable: false),
-                    nickname = table.Column<string>(type: "text", nullable: false),
-                    slug = table.Column<string>(type: "text", nullable: false),
-                    ownerid = table.Column<string>(type: "text", nullable: false),
-                    mainimageurl = table.Column<string>(type: "text", nullable: false),
-                    edited = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    created = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    rundate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    active = table.Column<bool>(type: "boolean", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_tributes", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -218,6 +195,38 @@ namespace lovedmemory.infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "tributes",
+                schema: "lovedmemory",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    viewcount = table.Column<int>(type: "integer", nullable: false),
+                    name = table.Column<string>(type: "text", nullable: false),
+                    nickname = table.Column<string>(type: "text", nullable: false),
+                    slug = table.Column<string>(type: "text", nullable: false),
+                    mainimageurl = table.Column<string>(type: "text", nullable: false),
+                    edited = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    created = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    rundate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    active = table.Column<bool>(type: "boolean", nullable: false),
+                    createdbyuserid = table.Column<string>(type: "text", nullable: false),
+                    lastmodified = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    lastmodifiedbyuserid = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_tributes", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_tributes_aspnetusers_createdbyuserid",
+                        column: x => x.createdbyuserid,
+                        principalSchema: "lovedmemory",
+                        principalTable: "aspnetusers",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "comments",
                 schema: "lovedmemory",
                 columns: table => new
@@ -227,11 +236,13 @@ namespace lovedmemory.infrastructure.Migrations
                     tributeid = table.Column<int>(type: "integer", nullable: false),
                     details = table.Column<string>(type: "text", nullable: false),
                     visible = table.Column<bool>(type: "boolean", nullable: false),
-                    dateposted = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     edited = table.Column<bool>(type: "boolean", nullable: false),
-                    dateedited = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     parentcommentid = table.Column<int>(type: "integer", nullable: true),
-                    commentid = table.Column<int>(type: "integer", nullable: true)
+                    commentid = table.Column<int>(type: "integer", nullable: true),
+                    created = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    createdbyuserid = table.Column<string>(type: "text", nullable: false),
+                    lastmodified = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    lastmodifiedbyuserid = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -306,6 +317,12 @@ namespace lovedmemory.infrastructure.Migrations
                 schema: "lovedmemory",
                 table: "comments",
                 column: "tributeid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tributes_createdbyuserid",
+                schema: "lovedmemory",
+                table: "tributes",
+                column: "createdbyuserid");
         }
 
         /// <inheritdoc />
@@ -344,11 +361,11 @@ namespace lovedmemory.infrastructure.Migrations
                 schema: "lovedmemory");
 
             migrationBuilder.DropTable(
-                name: "aspnetusers",
+                name: "tributes",
                 schema: "lovedmemory");
 
             migrationBuilder.DropTable(
-                name: "tributes",
+                name: "aspnetusers",
                 schema: "lovedmemory");
         }
     }
