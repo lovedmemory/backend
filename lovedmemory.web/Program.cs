@@ -1,11 +1,24 @@
 using lovedmemory.infrastructure.Security.AuthorizationFilters;
 using lovedmemory.infrastructure.Security.CurrentUserProvider;
 using lovedmemory.web.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.OpenApi.Models;
 using schoolapp.Infrastructure;
+using Serilog;
+using Serilog.Events;
 
 var builder = WebApplication.CreateBuilder(args);
+
+Log.Logger = new LoggerConfiguration()
+    //.Enrich.With
+    .Enrich.FromLogContext() //logging from DiagnosticContext
+    .Enrich.WithProperty("ApplicationName", "Billing_web_api")
+    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+    .WriteTo.Seq("http://localhost:5341")
+    .WriteTo.File($"{builder.Environment.ContentRootPath}/Logs/webapi_.txt",
+    LogEventLevel.Information,
+    "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}{NewLine}",
+    rollingInterval: RollingInterval.Day)
+    .CreateLogger();
 builder.WebHost.ConfigureKestrel(opts =>
 {
     opts.ListenAnyIP(5000); 
@@ -40,12 +53,12 @@ builder.Services.AddSwaggerGen(opt =>
     opt.OperationFilter<AuthenticationRequirementsOperationFilter>();
 });
 
-builder.Services.AddAuthorization(options =>
-{
-    options.FallbackPolicy = new AuthorizationPolicyBuilder()
-        .RequireAuthenticatedUser()
-        .Build();
-});
+//builder.Services.AddAuthorization(options =>
+//{
+//    options.FallbackPolicy = new AuthorizationPolicyBuilder()
+//        .RequireAuthenticatedUser()
+//        .Build();
+//});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

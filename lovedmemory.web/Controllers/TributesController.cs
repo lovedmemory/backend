@@ -1,4 +1,5 @@
-﻿using lovedmemory.application.Common.Security.Request;
+﻿using lovedmemory.infrastructure.Security.Auth;
+using Microsoft.AspNetCore.Authorization;
 using lovedmemory.application.DTOs;
 using lovedmemory.application.Contracts;
 using lovedmemory.domain.Entities;
@@ -22,6 +23,7 @@ namespace lovedmemory.web.Controllers
             _tributeService  = tributeService;
         }
         // GET: api/<TributesController>
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IEnumerable<TributeDto>> Get()
         {

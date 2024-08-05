@@ -7,7 +7,9 @@ namespace lovedmemory.Infrastructure.Data;
 public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbContext<AppUser>(options), IAppDbContext
 {
     public DbSet<Tribute> Tributes { get; set; }
+    public DbSet<ExtraDetails> TributeDetails { get; set; }
     public DbSet<Comment> Comments { get; set; }
+    public DbSet<Gallery> Gallary { get; set; }
     public DbSet<EventDetail> EventDetails { get; set; }
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -42,6 +44,12 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
         builder.Entity<Tribute>()
         .ToTable("tributes", schema: "lovedmemory");
 
+        builder.Entity<ExtraDetails>()
+        .ToTable("tributedetails", schema: "lovedmemory");
+
+        builder.Entity<Gallery>()
+        .ToTable("gallery", schema: "lovedmemory");
+
         builder.Entity<Comment>()
         .ToTable("comments", schema: "lovedmemory");
 
@@ -53,5 +61,21 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
          .WithMany()
          .HasForeignKey(t => t.CreatedByUserId)
          .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Tribute>()
+            .HasMany(t => t.Gallery)
+            .WithOne(g => g.Tribute)
+            .HasForeignKey(g => g.TributeId);
+
+        builder.Entity<Tribute>()
+            .HasOne(t => t.ExtraDetails)
+            .WithOne(e => e.Tribute)
+            .HasForeignKey<ExtraDetails>(e => e.TributeId);
+
+        builder.Entity<Gallery>()
+        .HasKey(g => g.TributeId);
+
+        builder.Entity<ExtraDetails>()
+            .HasKey(e => e.TributeId);
     }
 }

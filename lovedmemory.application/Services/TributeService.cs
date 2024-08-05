@@ -4,6 +4,8 @@ using lovedmemory.application.Common.Interfaces;
 using lovedmemory.application.Contracts;
 using lovedmemory.domain.Entities;
 using lovedmemory.application.DTOs;
+using lovedmemory.application.Utils;
+using System;
 
 namespace lovedmemory.application.Services
 {
@@ -31,8 +33,8 @@ namespace lovedmemory.application.Services
               .Select(t => new TributeDto
               {
                   Id = t.Id,
-                  Name = t.Name,
-                  Description= t.Description,
+                  Name = t.FullName,
+                  Description = t.Description,
                   Title = t.Title,
                   RunDate = t.RunDate,
                   Created = t.Created,
@@ -52,12 +54,19 @@ namespace lovedmemory.application.Services
               }).FirstOrDefaultAsync();
             return tribute;
         }
-        public async Task<Tribute?> GetTribute(int id)
+        public async Task<Tribute?> GetTribute(int id, CancellationToken token)
         {
             var tribute = await _context.Tributes
             .Include(t => t.Comments)
             .ThenInclude(c => c.Replies)
-            .SingleOrDefaultAsync(t => t.Id == id);
+            .SingleOrDefaultAsync(t => t.Id == id,token);
+
+            if (tribute != null)
+            {
+                ++tribute.ViewCount;
+                await _context.SaveChangesAsync(token);
+            }
+
             return tribute;
         }
 
@@ -70,7 +79,7 @@ namespace lovedmemory.application.Services
               .Select(t => new TributeDto
               {
                   Id = t.Id,
-                  Name = t.Name,
+                  Name = t.FullName,
                   RunDate = t.RunDate,
                   Created = t.Created,
                   Active = t.Active,
@@ -108,32 +117,46 @@ namespace lovedmemory.application.Services
         }
         public async Task<IEnumerable<TributeDto>?> GetTributes()
         {
-            return await _context.Tributes
-         .Where(t => t.Active == true)
-         .Include(t => t.CreatedByUser)
-         .Include(t => t.Comments)
-         .ThenInclude(c => c.Replies)
-         .Select(t => new TributeDto
-         {
-             Id = t.Id,
-             Name = t.Name,
-             RunDate = t.RunDate,
-             Created = t.Created,
-             Active = t.Active,
-             MainImageUrl = t.MainImageUrl,
-             ViewCount = t.ViewCount,
-             AuthorName = t.CreatedByUser.FullName,
-             AuthorEmail = t.CreatedByUser.Email,
-             Comments = t.Comments.Select(c => new Comment
-             {
-                 Id = c.Id,
-                 Details = c.Details,
-                 Created = c.Created,
-                 CreatedByUserId = c.CreatedByUserId,
-                 Replies = GetAllReplies(c.Replies).ToList()
-             }).ToList()
-         })
-         .ToListAsync();
+            IEnumerable<TributeDto> tributes = new List<TributeDto>();
+            try
+            {
+                tributes = await _context.Tributes
+                .Where(t => t.Active == true)
+                .Include(t => t.CreatedByUser)
+                .Include(t => t.Comments)
+                .ThenInclude(c => c.Replies)
+                .Select(t => new TributeDto
+                {
+                    Id = t.Id,
+                    Name = t.FullName,
+                    RunDate = t.RunDate,
+                    Created = t.Created,
+                    Active = t.Active,
+                    Title = t.Title,
+                    Description = t.Description,
+                    //NickName = t.NickName,
+                    Slug = t.Slug,
+                    MainImageUrl = t.MainImageUrl,
+                    ViewCount = t.ViewCount,
+                    AuthorName = t.CreatedByUser.FullName,
+                    AuthorEmail = t.CreatedByUser.Email,
+                    Comments = t.Comments.Select(c => new Comment
+                    {
+                        Id = c.Id,
+                        Details = c.Details,
+                        Created = c.Created,
+                        CreatedByUserId = c.CreatedByUserId,
+                        Replies = GetAllReplies(c.Replies).ToList()
+                    }).ToList()
+                })
+                .ToListAsync();
+                return tributes;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting tributes");
+                return tributes;
+            }
         }
 
         public async Task<bool> PostTribute(CreateTributeDto tribute, CancellationToken cancellationToken)
@@ -142,16 +165,18 @@ namespace lovedmemory.application.Services
             {
                 return false;
             }
+            string _slug = SlugGenerator.GenerateSlug(tribute.TributeName);
             Tribute _tribute = new()
             {
                 Active = true,
                 Created = _dateTime.Now,
-                RunDate = _dateTime.Now,
-                Name = tribute.TributeName,
+                RunDate = tribute.RunDate,
+                FirstName = tribute.TributeName,
+                Published = tribute.Published,
                 Title = tribute.Title,
                 Description = tribute.Description,
-                NickName = tribute.NickName,
-                Slug = tribute.Slug,
+               // NickName = tribute.NickName,
+                Slug = _slug,
                 MainImageUrl = tribute.MainImageUrl,
 
             };
@@ -161,13 +186,14 @@ namespace lovedmemory.application.Services
             return true;
         }
 
-        public async Task<Tribute?> PutTribute(int id, Tribute Tribute, CancellationToken cancellationToken)
+        public async Task<Tribute?> PutTribute(int id, Tribute _tribute, CancellationToken cancellationToken)
         {
-            if (Tribute == null || id != Tribute.Id)
+            if (_tribute == null || id != _tribute.Id)
             {
                 return null;
             }
-
+            string _slug = SlugGenerator.GenerateSlug(_tribute.FullName);
+            _tribute.Slug = _slug;
             try
             {
                 var existingTribute = await _context.Tributes.FindAsync([id], cancellationToken);
@@ -177,7 +203,7 @@ namespace lovedmemory.application.Services
                     return null; // Tribute with the given ID not found.
                 }
 
-                _context.Tributes.Entry(existingTribute).CurrentValues.SetValues(Tribute);
+                _context.Tributes.Entry(existingTribute).CurrentValues.SetValues(_tribute);
 
                 await _context.SaveChangesAsync(cancellationToken);
 
@@ -208,6 +234,9 @@ namespace lovedmemory.application.Services
             return true;
         }
 
-
+        public Task<Tribute?> GetTribute(int id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

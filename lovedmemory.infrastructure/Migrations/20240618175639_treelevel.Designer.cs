@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using lovedmemory.Infrastructure.Data;
@@ -11,9 +12,11 @@ using lovedmemory.Infrastructure.Data;
 namespace lovedmemory.infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240618175639_treelevel")]
+    partial class treelevel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -382,89 +385,6 @@ namespace lovedmemory.infrastructure.Migrations
                     b.ToTable("eventdetails", "lovedmemory");
                 });
 
-            modelBuilder.Entity("lovedmemory.domain.Entities.ExtraDetails", b =>
-                {
-                    b.Property<int>("TributeId")
-                        .HasColumnType("integer")
-                        .HasColumnName("tributeid");
-
-                    b.Property<DateTimeOffset>("DateOfBirth")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("dateofbirth");
-
-                    b.Property<DateTimeOffset>("DateOfDeath")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("dateofdeath");
-
-                    b.Property<string>("LifeStory")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("lifestory");
-
-                    b.Property<string>("NickName")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("nickname");
-
-                    b.HasKey("TributeId");
-
-                    b.ToTable("tributedetails", "lovedmemory");
-                });
-
-            modelBuilder.Entity("lovedmemory.domain.Entities.Gallery", b =>
-                {
-                    b.Property<int>("TributeId")
-                        .HasColumnType("integer")
-                        .HasColumnName("tributeid");
-
-                    b.Property<bool>("Active")
-                        .HasColumnType("boolean")
-                        .HasColumnName("active");
-
-                    b.Property<DateTimeOffset>("Added")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("added");
-
-                    b.Property<string>("AddedById")
-                        .HasColumnType("text")
-                        .HasColumnName("addedbyid");
-
-                    b.Property<bool>("Approved")
-                        .HasColumnType("boolean")
-                        .HasColumnName("approved");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("description");
-
-                    b.Property<string>("MediaTitle")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("mediatitle");
-
-                    b.Property<string>("MediaUrl")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("mediaurl");
-
-                    b.Property<string>("Tags")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("tags");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("userid");
-
-                    b.HasKey("TributeId");
-
-                    b.HasIndex("AddedById");
-
-                    b.ToTable("gallery", "lovedmemory");
-                });
-
             modelBuilder.Entity("lovedmemory.domain.Entities.Tribute", b =>
                 {
                     b.Property<int>("Id")
@@ -496,11 +416,6 @@ namespace lovedmemory.infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("edited");
 
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("firstname");
-
                     b.Property<DateTimeOffset?>("LastModified")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("lastmodified");
@@ -509,20 +424,20 @@ namespace lovedmemory.infrastructure.Migrations
                         .HasColumnType("text")
                         .HasColumnName("lastmodifiedbyuserid");
 
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("lastname");
-
                     b.Property<string>("MainImageUrl")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("mainimageurl");
 
-                    b.Property<string>("OtherNames")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("othernames");
+                        .HasColumnName("name");
+
+                    b.Property<string>("NickName")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("nickname");
 
                     b.Property<bool>("Published")
                         .HasColumnType("boolean")
@@ -536,11 +451,6 @@ namespace lovedmemory.infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("slug");
-
-                    b.Property<string>("Template")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("template");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -631,37 +541,6 @@ namespace lovedmemory.infrastructure.Migrations
                         .HasConstraintName("fk_comments_tributes_tributeid");
                 });
 
-            modelBuilder.Entity("lovedmemory.domain.Entities.ExtraDetails", b =>
-                {
-                    b.HasOne("lovedmemory.domain.Entities.Tribute", "Tribute")
-                        .WithOne("ExtraDetails")
-                        .HasForeignKey("lovedmemory.domain.Entities.ExtraDetails", "TributeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_tributedetails_tributes_tributeid");
-
-                    b.Navigation("Tribute");
-                });
-
-            modelBuilder.Entity("lovedmemory.domain.Entities.Gallery", b =>
-                {
-                    b.HasOne("lovedmemory.domain.Entities.AppUser", "AddedBy")
-                        .WithMany()
-                        .HasForeignKey("AddedById")
-                        .HasConstraintName("fk_gallary_aspnetusers_addedbyid");
-
-                    b.HasOne("lovedmemory.domain.Entities.Tribute", "Tribute")
-                        .WithMany("Gallery")
-                        .HasForeignKey("TributeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_gallary_tributes_tributeid");
-
-                    b.Navigation("AddedBy");
-
-                    b.Navigation("Tribute");
-                });
-
             modelBuilder.Entity("lovedmemory.domain.Entities.Tribute", b =>
                 {
                     b.HasOne("lovedmemory.domain.Entities.AppUser", "CreatedByUser")
@@ -681,11 +560,6 @@ namespace lovedmemory.infrastructure.Migrations
             modelBuilder.Entity("lovedmemory.domain.Entities.Tribute", b =>
                 {
                     b.Navigation("Comments");
-
-                    b.Navigation("ExtraDetails")
-                        .IsRequired();
-
-                    b.Navigation("Gallery");
                 });
 #pragma warning restore 612, 618
         }

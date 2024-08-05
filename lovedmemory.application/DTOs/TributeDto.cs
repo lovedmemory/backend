@@ -25,6 +25,8 @@ namespace lovedmemory.application.DTOs
         public string Description { get; set; }
         public string TributeName { get; set; }
         public string? NickName { get; set; }
+        public DateTimeOffset RunDate { get; set; }
+        public bool Published { get; set; }
         public string? Slug { get; set; }
         public string MainImageUrl { get; set; }
 
