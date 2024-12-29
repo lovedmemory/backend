@@ -1,11 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace lovedmemory.domain.Entities
+﻿namespace lovedmemory.domain.Entities
 {
     public class Gallery
     {
         public int TributeId { get; set; }
         public string MediaUrl { get; set; }
+        public MediaType MediaType { get; set; }
         public bool Active { get; set; }
         public bool Approved { get; set; }
         public DateTimeOffset Added { get; set; } = DateTimeOffset.UtcNow;    
@@ -16,5 +15,10 @@ namespace lovedmemory.domain.Entities
         public virtual AppUser AddedBy { get; set; }
         public virtual Tribute Tribute { get; set; }
 
+    }
+    public enum MediaType
+    {
+        Image = 0,
+        Video = 1
     }
 }

@@ -1,5 +1,4 @@
-﻿using lovedmemory.infrastructure.Security.Auth;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using lovedmemory.application.DTOs;
 using lovedmemory.application.Contracts;
 using lovedmemory.domain.Entities;

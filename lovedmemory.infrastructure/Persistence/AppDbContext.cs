@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using lovedmemory.domain.Entities;
 using lovedmemory.application.Common.Interfaces;
+using lovedmemory.Domain.Entities.Other;
+using lovedmemory.infrastructure.Configurations;
 namespace lovedmemory.Infrastructure.Data;
 
 public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbContext<AppUser>(options), IAppDbContext
@@ -11,6 +13,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
     public DbSet<Comment> Comments { get; set; }
     public DbSet<Gallery> Gallary { get; set; }
     public DbSet<EventDetail> EventDetails { get; set; }
+    public DbSet<Permission> Permissions { get; set; }
+    public DbSet<RolePermission> RolePermissions { get;  set; }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
 
@@ -40,6 +45,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
                 foreignKey.SetConstraintName(foreignKey.GetConstraintName().ToLower());
             }
         }
+        builder.ApplyConfiguration(new LifeStoryEntityConfig());
 
         builder.Entity<Tribute>()
         .ToTable("tributes", schema: "lovedmemory");
@@ -69,7 +75,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
 
         builder.Entity<Tribute>()
             .HasOne(t => t.ExtraDetails)
-            .WithOne(e => e.Tribute)
+            .WithOne()
             .HasForeignKey<ExtraDetails>(e => e.TributeId);
 
         builder.Entity<Gallery>()

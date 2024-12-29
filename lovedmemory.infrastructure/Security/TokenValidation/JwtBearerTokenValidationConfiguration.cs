@@ -1,10 +1,10 @@
 ﻿using System.Text;
-using lovedmemory.infrastructure.Security.TokenGenerator;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using lovedmemory.Infrastructure.Security.TokenGenerator;
 
-namespace lovedmemory.infrastructure.Security.TokenValidation;
+namespace lovedmemory.Infrastructure.Security.TokenValidation;
 
 public sealed class JwtBearerTokenValidationConfiguration(IOptions<JwtSettings> jwtSettings)
     : IConfigureNamedOptions<JwtBearerOptions>

@@ -10,12 +10,10 @@ namespace lovedmemory.application.Services
     {
         private readonly IAppDbContext _context;
         private readonly ILogger<CommentService> _logger;
-        private readonly IDateTime _dateTime;
-        public CommentService(IAppDbContext context, ILogger<CommentService> logger, IDateTime dateTime)
+        public CommentService(IAppDbContext context, ILogger<CommentService> logger)
         {
             _context = context;
             _logger = logger;
-            _dateTime = dateTime;
         }
 
         public async Task<bool> PostComment(CommentDto Comment, CancellationToken cancellationToken)

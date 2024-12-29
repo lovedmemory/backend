@@ -1,28 +1,32 @@
-﻿using lovedmemory.application.Common.Interfaces;
-using lovedmemory.application.DTOs;
-using lovedmemory.domain.Entities;
-using lovedmemory.infrastructure.Identity;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using lovedmemory.application.DTOs;
+using lovedmemory.Infrastructure.Security.TokenGenerator;
+using lovedmemory.domain.Entities;
+using Microsoft.Extensions.Logging;
+using System.Text;
+using lovedmemory.application.Common.Models;
 
-namespace lovedmemory.infrastructure.Security.Auth;
+namespace lovedmemory.Infrastructure.Security.Auth;
 
 public class AuthService : IAuthService
 {
     private readonly IJwtTokenGenerator _tokenGenerator;
     private readonly UserManager<AppUser> _userManager;
+    private readonly ILogger<AuthService> _logger;
 
-    public AuthService(UserManager<AppUser> userManager,  IJwtTokenGenerator tokenGenerator)
+    public AuthService(UserManager<AppUser> userManager, IJwtTokenGenerator tokenGenerator, ILogger<AuthService> logger)
     {
         _userManager = userManager;
         _tokenGenerator = tokenGenerator;
+        _logger = logger;
     }
 
-    public async Task<UserDto> Register(RegisterDto request)
+    public async Task<Result<UserDto>> Register(RegisterDto request)
     {
         var userByEmail = await _userManager.FindByEmailAsync(request.Email);
         //var userByUsername = await _userManager.FindByNameAsync(request.Username);
-        if (userByEmail is not null )
+        if (userByEmail is not null)
         {
             throw new ArgumentException($"User with email {request.Email} already exists.");
         }
@@ -37,32 +41,50 @@ public class AuthService : IAuthService
 
             SecurityStamp = Guid.NewGuid().ToString()
         };
-
-        var result = await _userManager.CreateAsync(user, request.Password);
-
-        if (!result.Succeeded)
+        try
         {
-            throw new ArgumentException($"Unable to register user {string.Concat(request.Firstname, " ", request.Lastname)} errors: {GetErrorsText(result.Errors)}");
-        }
+            var result = await _userManager.CreateAsync(user, request.Password);
 
-        return await Login(new LoginDto { Email = request.Email, Password = request.Password });
+            if (!result.Succeeded)
+            {
+                var stringBuilder = new StringBuilder();
+                foreach (var error in result.Errors)
+                {
+                    stringBuilder.AppendLine(error.Description);
+                }
+                _logger.LogError( "Unable to register user. {err}", stringBuilder.ToString());
+                return Result<UserDto>.Failure(result.Errors.Select(error => error.Description).ToList());
+            }
+
+           var res =  await Login(new LoginDto { Email = request.Email, Password = request.Password });
+            return Result<UserDto>.Success(res);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError( "Unable to register user. {err}", ex.Message);
+            return Result<UserDto>.Failure([ex.Message]);
+        }
     }
 
     public async Task<UserDto> Login(LoginDto request)
     {
         var user = await _userManager.FindByNameAsync(request.Email);
-       
 
         user ??= await _userManager.FindByEmailAsync(request.Email);
 
         if (user is null || !await _userManager.CheckPasswordAsync(user, request.Password))
         {
-            throw new  ArgumentException($"Unable to authenticate user {request.Email}");
-        }        
+            throw new UnauthorizedAccessException($"Unable to authenticate user {request.Email}");
+        }
+        var userRoles = await _userManager.GetRolesAsync(user);
 
-        var token =  _tokenGenerator.GenerateToken(user.Id, user.FirstName,user.LastName,user.Email);
+        var token = await _tokenGenerator.GenerateTokenAsync(user, userRoles);
 
-        return new UserDto { Token=token, User=new AppUserDto() {Email=user.Email, Name= user.FullName, Phone=user.PhoneNumber,NickName=user.NickName} };
+        return new UserDto
+        {
+            AccessToken = token,
+            User = new AppUserDto { Email = user.Email, FirstName = user.FirstName, LastName = user.LastName, OtherName = user.OtherName, FullName=user.FullName, PhoneNumber = user.PhoneNumber, Id = user.Id, Avatar = user.Avatar, CountryCode = user.CountryCode }
+        };
     }
 
     public string GetTokenFromRequest(HttpRequest request)
@@ -74,7 +96,6 @@ public class AuthService : IAuthService
 
         if (authHeader.Count > 0)
         {
-            // Extract the token from the Authorization header (e.g., Bearer <token>)
             var authValue = authHeader.ToString().Split(' ');
             if (authValue.Length == 2 && authValue[0].Equals("Bearer", StringComparison.OrdinalIgnoreCase))
             {
@@ -89,4 +110,5 @@ public class AuthService : IAuthService
     {
         return string.Join(", ", errors.Select(error => error.Description).ToArray());
     }
+
 }

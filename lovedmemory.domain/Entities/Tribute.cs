@@ -8,10 +8,12 @@ namespace lovedmemory.domain.Entities
         public int Id { get; set; }
         public int ViewCount { get; set; }
         public string Title { get; set; }
+        public string PersonalPhrase { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string OtherNames { get; set; }
-        public string Description { get; set; }
+        public string About { get; set; }
+        public string Gender { get; set; }
         public string Slug { get; set; }
         public string Template { get; set; }
         public string MainImageUrl { get; set; }
@@ -20,16 +22,14 @@ namespace lovedmemory.domain.Entities
         public DateTimeOffset RunDate { get; set; }
         public bool Published { get; set; } = true;
         public bool Active { get; set; }
+        public bool IsPrivate { get; set; }
+        public CoverPhoto CoverPhoto { get; set; }
         public virtual IList<Comment> Comments { get; set; } = [];
-        public virtual ExtraDetails ExtraDetails { get; set; }
+        public virtual ExtraDetails? ExtraDetails { get; set; }
         public virtual IList<Gallery> Gallery { get; set; } = [];
-        [NotMapped]
-        public string FullName
-        {
-            get
-            {
-               return $"{FirstName} {OtherNames} {LastName}".Trim();
-            }
-        }
+        public virtual IList<Audio>? Audios { get; set; } = [];
+        public virtual LifeStory? LifeStory { get; set; }
+
+    
     }
 }

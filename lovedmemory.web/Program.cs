@@ -1,17 +1,18 @@
-using lovedmemory.infrastructure.Security.AuthorizationFilters;
-using lovedmemory.infrastructure.Security.CurrentUserProvider;
 using lovedmemory.web.Services;
 using Microsoft.OpenApi.Models;
-using schoolapp.Infrastructure;
 using Serilog;
 using Serilog.Events;
+using lovedmemory.Infrastructure.Security.CurrentUserProvider;
+using lovedmemory.Infrastructure;
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
 Log.Logger = new LoggerConfiguration()
     //.Enrich.With
     .Enrich.FromLogContext() //logging from DiagnosticContext
-    .Enrich.WithProperty("ApplicationName", "Billing_web_api")
+    .Enrich.WithProperty("ApplicationName", "lovedmemory_api")
     .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
     .WriteTo.Seq("http://localhost:5341")
     .WriteTo.File($"{builder.Environment.ContentRootPath}/Logs/webapi_.txt",
@@ -19,12 +20,17 @@ Log.Logger = new LoggerConfiguration()
     "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}{NewLine}",
     rollingInterval: RollingInterval.Day)
     .CreateLogger();
+builder.Configuration.AddJsonFile("appsettings.json", false, true);
+builder.Configuration.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true);
+builder.Configuration.AddEnvironmentVariables();
+builder.Logging.AddSerilog();
 builder.WebHost.ConfigureKestrel(opts =>
 {
     opts.ListenAnyIP(5000); 
 
 });
-builder.Services.AddInfrastructureServices(builder.Configuration);
+
+builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplicationServices();
 builder.Services.AddScoped<IUserService, UserService>();
 
@@ -34,10 +40,7 @@ builder.Services.AddHttpContextAccessor();
 //builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 //    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
 
-builder.Services.AddControllers(options =>
-{
-    options.Filters.Add<AuthorizationFilter>();
-});
+builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(opt =>

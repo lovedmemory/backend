@@ -1,97 +1,111 @@
-﻿using AutoMapper;
-using lovedmemory.application.Common.Interfaces;
-using lovedmemory.application.DTOs;
-using lovedmemory.domain.Entities;
-using lovedmemory.infrastructure.Security.Auth;
-using lovedmemory.infrastructure.Security.RoleService;
-using lovedmemory.infrastructure.Security.TokenGenerator;
-using lovedmemory.infrastructure.Security.TokenValidation;
-using lovedmemory.Infrastructure.Data;
-using lovedmemory.Infrastructure.Identity;
-using lovedmemory.Infrastructure.Services;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using lovedmemory.Infrastructure.Security.Auth;
+using lovedmemory.Infrastructure.Security.CurrentUserProvider;
+using lovedmemory.Infrastructure.Security.RoleService;
+using lovedmemory.Infrastructure.Security.TokenGenerator;
+using lovedmemory.Infrastructure.Security.TokenValidation;
+using lovedmemory.Infrastructure.Data;
 using lovedmemory.Infrastructure.Persistence.Interceptors;
-using lovedmemory.infrastructure.Security.CurrentUserProvider;
+using lovedmemory.application.Common.Interfaces;
+using lovedmemory.domain.Entities;
 
-namespace schoolapp.Infrastructure;
+
+namespace lovedmemory.Infrastructure;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
+
+    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        try
-        {
-            var connectionString = configuration.GetConnectionString("DefaultConnection");
-            services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
-            //Guard.Against.Null(connectionString, message: "Connection string 'DefaultConnection' not found.");
-
-            services.AddScoped<IUserProvider, UserProvider>();
-          services.AddScoped<ISaveChangesInterceptor, AuditableEntitySaveChangesInterceptor>();
-
-
-            services.AddDbContext<AppDbContext>((sp, options) =>
-            {
-               options.AddInterceptors(sp.GetServices<ISaveChangesInterceptor>());
-                options.UseNpgsql(connectionString);
-
-                //#if (UseSQLite)
-                //            options.UseSqlite(connectionString);
-                //#else
-                //                options.UseSqlServer(connectionString);
-                //#endif
-            });
-
-            services.AddScoped<IAppDbContext, AppDbContext>();
-            services.AddScoped<IAuthService, AuthService>();
-            services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
-            services
-                .ConfigureOptions<JwtBearerTokenValidationConfiguration>()
-                .AddAuthentication(defaultScheme: JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer();
-            var config = new MapperConfiguration(cfg => cfg.CreateMap<Tribute, TributeDto>());
-
-            //services.AddScoped<ApplicationDbContextInitialiser>();
-
-#if (UseApiOnly)
-        services.AddAuthentication()
-            .AddBearerToken(IdentityConstants.BearerScheme);
-
-        services.AddAuthorizationBuilder();
 
         services
-            .AddIdentityCore<ApplicationUser>()
-            .AddRoles<IdentityRole>()
-            .AddEntityFrameworkStores<ApplicationDbContext>()
-            .AddApiEndpoints();
-#else
-            services
-                .AddDefaultIdentity<AppUser>()
-                .AddRoles<IdentityRole>()
-                .AddEntityFrameworkStores<AppDbContext>();
-#endif
-            services.AddScoped<UserManager<AppUser>>();
-            services.AddTransient<IIdentityService, IdentityService>();
 
-            services.AddScoped<IRoleService,  RoleService>();
-            //services.AddScoped<RoleManager<IdentityRole>>();
+            .AddAuthentication(configuration)
+            .AddAuthorization()
+                       .AddHttpContextAccessor()
 
-            services.AddSingleton<IDateTime, DateTimeService>();
+            .AddPersistence(configuration);
+        return services;
+    }
 
-            //services.AddAuthorization(options =>
-            //    options.AddPolicy(Policies.CanPurge, policy => policy.RequireRole(Roles.Administrator)));
 
-        }
-        catch (Exception ex)
+
+
+   
+
+    private static IServiceCollection AddPersistence(this IServiceCollection services, IConfiguration configuration)
+    {
+        var connectionString = configuration.GetConnectionString("DefaultConnection");
+        services.AddDbContext<AppDbContext>((sp, options) =>
         {
+            options.AddInterceptors(sp.GetServices<ISaveChangesInterceptor>());
+            options.UseNpgsql(connectionString).UseSnakeCaseNamingConvention();
+        });
+        services.AddScoped<IAppDbContext, AppDbContext>();
 
-            Console.WriteLine($"Error during migration: {ex.Message}");
-            throw;
-        }
+        return services;
+    }
+
+    public static IServiceCollection Authorization(this IServiceCollection services)
+    {
+        services.AddAuthorization(options =>
+        {
+            // Create a scope to access scoped services during configuration
+            using var scope = services.BuildServiceProvider().CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+            // Get permissions from DB
+            var permissions = dbContext.Permissions
+                .Select(p => p.Name)
+                .ToList();
+
+            // Register each permission as a policy
+            foreach (var permission in permissions)
+            {
+                options.AddPolicy(permission,
+                    policy => policy.Requirements.Add(new PermissionRequirement(permission)));
+            }
+        });
+
+        // Register required services
+        services.AddScoped<IAuthorizationHandler, PermissionHandler>();
+        services.AddScoped<IUserProvider, UserProvider>();
+        services.AddScoped<IRoleService, RoleService>();
+        services.AddScoped<IRolePermissionService, RolePermissionService>();
+
+        return services;
+    }
+    private static IServiceCollection AddAuthentication(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.Configure<JwtSettings>(configuration.GetSection(JwtSettings.Section));
+        services.AddScoped<IAuthService, AuthService>();
+
+        services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+        services
+            .AddDefaultIdentity<AppUser>()
+            .AddRoles<IdentityRole>()
+            .AddEntityFrameworkStores<AppDbContext>();
+
+        services
+            .Configure<IdentityOptions>(options =>
+            {
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequiredLength = 6;
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+                options.Lockout.MaxFailedAccessAttempts = 5;
+                options.Lockout.AllowedForNewUsers = true;
+            })
+            .ConfigureOptions<JwtBearerTokenValidationConfiguration>()
+            .AddAuthentication(defaultScheme: JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer();
+        services.AddScoped<UserManager<AppUser>>();
+
         return services;
     }
 }

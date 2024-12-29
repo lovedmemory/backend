@@ -1,4 +1,4 @@
-namespace lovedmemory.infrastructure.Security.TokenGenerator;
+namespace lovedmemory.Infrastructure.Security.TokenGenerator;
 
 public class JwtSettings
 {

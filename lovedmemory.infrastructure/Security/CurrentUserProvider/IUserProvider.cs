@@ -1,4 +1,4 @@
-﻿namespace lovedmemory.infrastructure.Security.CurrentUserProvider
+﻿namespace lovedmemory.Infrastructure.Security.CurrentUserProvider
 {
     public interface IUserProvider
     {

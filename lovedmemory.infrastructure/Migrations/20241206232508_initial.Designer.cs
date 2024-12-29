@@ -12,8 +12,8 @@ using lovedmemory.Infrastructure.Data;
 namespace lovedmemory.infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240617184519_tributedesc")]
-    partial class tributedesc
+    [Migration("20241206232508_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,7 +21,7 @@ namespace lovedmemory.infrastructure.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("lovedmemory")
-                .HasAnnotation("ProductVersion", "8.0.6")
+                .HasAnnotation("ProductVersion", "8.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -190,6 +190,57 @@ namespace lovedmemory.infrastructure.Migrations
                     b.ToTable("aspnetusertokens", "lovedmemory");
                 });
 
+            modelBuilder.Entity("lovedmemory.Domain.Entities.Other.Permission", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Desc")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("desc");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("name");
+
+                    b.HasKey("Id")
+                        .HasName("pk_permissions");
+
+                    b.ToTable("permissions", "lovedmemory");
+                });
+
+            modelBuilder.Entity("lovedmemory.Domain.Entities.Other.RolePermission", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("PermissionId")
+                        .HasColumnType("integer")
+                        .HasColumnName("permissionid");
+
+                    b.Property<string>("RoleId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("roleid");
+
+                    b.HasKey("Id")
+                        .HasName("pk_rolepermissions");
+
+                    b.HasIndex("PermissionId");
+
+                    b.ToTable("rolepermissions", "lovedmemory");
+                });
+
             modelBuilder.Entity("lovedmemory.domain.Entities.AppUser", b =>
                 {
                     b.Property<string>("Id")
@@ -200,10 +251,18 @@ namespace lovedmemory.infrastructure.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("accessfailedcount");
 
+                    b.Property<string>("Avatar")
+                        .HasColumnType("text")
+                        .HasColumnName("avatar");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("text")
                         .HasColumnName("concurrencystamp");
+
+                    b.Property<string>("CountryCode")
+                        .HasColumnType("text")
+                        .HasColumnName("countrycode");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -287,6 +346,63 @@ namespace lovedmemory.infrastructure.Migrations
                     b.ToTable("aspnetusers", "lovedmemory");
                 });
 
+            modelBuilder.Entity("lovedmemory.domain.Entities.Audio", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTimeOffset>("Added")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("added");
+
+                    b.Property<string>("AddedById")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("addedbyid");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("description");
+
+                    b.Property<string>("Tags")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("tags");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("title");
+
+                    b.Property<int>("TributeId")
+                        .HasColumnType("integer")
+                        .HasColumnName("tributeid");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("url");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("userid");
+
+                    b.HasKey("Id")
+                        .HasName("pk_audio");
+
+                    b.HasIndex("AddedById");
+
+                    b.HasIndex("TributeId");
+
+                    b.ToTable("audio", "lovedmemory");
+                });
+
             modelBuilder.Entity("lovedmemory.domain.Entities.Comment", b =>
                 {
                     b.Property<int>("Id")
@@ -330,6 +446,10 @@ namespace lovedmemory.infrastructure.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("parentcommentid");
 
+                    b.Property<int>("TreeLevel")
+                        .HasColumnType("integer")
+                        .HasColumnName("treelevel");
+
                     b.Property<int>("TributeId")
                         .HasColumnType("integer")
                         .HasColumnName("tributeid");
@@ -346,6 +466,39 @@ namespace lovedmemory.infrastructure.Migrations
                     b.HasIndex("TributeId");
 
                     b.ToTable("comments", "lovedmemory");
+                });
+
+            modelBuilder.Entity("lovedmemory.domain.Entities.CoverPhoto", b =>
+                {
+                    b.Property<int>("CoverPhotoId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("coverphotoid");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("CoverPhotoId"));
+
+                    b.Property<int>("Height")
+                        .HasColumnType("integer")
+                        .HasColumnName("height");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("imageurl");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("title");
+
+                    b.Property<int>("Width")
+                        .HasColumnType("integer")
+                        .HasColumnName("width");
+
+                    b.HasKey("CoverPhotoId")
+                        .HasName("pk_coverphoto");
+
+                    b.ToTable("coverphoto", "lovedmemory");
                 });
 
             modelBuilder.Entity("lovedmemory.domain.Entities.EventDetail", b =>
@@ -381,6 +534,128 @@ namespace lovedmemory.infrastructure.Migrations
                     b.ToTable("eventdetails", "lovedmemory");
                 });
 
+            modelBuilder.Entity("lovedmemory.domain.Entities.ExtraDetails", b =>
+                {
+                    b.Property<int>("TributeId")
+                        .HasColumnType("integer")
+                        .HasColumnName("tributeid");
+
+                    b.Property<string>("BirthCountry")
+                        .HasColumnType("text")
+                        .HasColumnName("birthcountry");
+
+                    b.Property<DateTimeOffset>("DateOfBirth")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("dateofbirth");
+
+                    b.Property<DateTimeOffset>("DateOfDeath")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("dateofdeath");
+
+                    b.Property<string>("DeathCountry")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("deathcountry");
+
+                    b.Property<string>("LifeStory")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("lifestory");
+
+                    b.Property<string>("NickName")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("nickname");
+
+                    b.Property<int>("Relationship")
+                        .HasColumnType("integer")
+                        .HasColumnName("relationship");
+
+                    b.HasKey("TributeId");
+
+                    b.ToTable("tributedetails", "lovedmemory");
+                });
+
+            modelBuilder.Entity("lovedmemory.domain.Entities.Gallery", b =>
+                {
+                    b.Property<int>("TributeId")
+                        .HasColumnType("integer")
+                        .HasColumnName("tributeid");
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("boolean")
+                        .HasColumnName("active");
+
+                    b.Property<DateTimeOffset>("Added")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("added");
+
+                    b.Property<string>("AddedById")
+                        .HasColumnType("text")
+                        .HasColumnName("addedbyid");
+
+                    b.Property<bool>("Approved")
+                        .HasColumnType("boolean")
+                        .HasColumnName("approved");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("description");
+
+                    b.Property<string>("MediaTitle")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("mediatitle");
+
+                    b.Property<int>("MediaType")
+                        .HasColumnType("integer")
+                        .HasColumnName("mediatype");
+
+                    b.Property<string>("MediaUrl")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("mediaurl");
+
+                    b.Property<string>("Tags")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("tags");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("userid");
+
+                    b.HasKey("TributeId");
+
+                    b.HasIndex("AddedById");
+
+                    b.ToTable("gallery", "lovedmemory");
+                });
+
+            modelBuilder.Entity("lovedmemory.domain.Entities.LifeStory", b =>
+                {
+                    b.Property<int>("TributeId")
+                        .HasColumnType("integer")
+                        .HasColumnName("tributeid");
+
+                    b.Property<string>("Story")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("story");
+
+                    b.Property<string>("StorySection")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("storysection");
+
+                    b.HasKey("TributeId");
+
+                    b.ToTable("lifestory", "tributes");
+                });
+
             modelBuilder.Entity("lovedmemory.domain.Entities.Tribute", b =>
                 {
                     b.Property<int>("Id")
@@ -390,9 +665,18 @@ namespace lovedmemory.infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("About")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("about");
+
                     b.Property<bool>("Active")
                         .HasColumnType("boolean")
                         .HasColumnName("active");
+
+                    b.Property<int>("CoverPhotoId")
+                        .HasColumnType("integer")
+                        .HasColumnName("coverphotoid");
 
                     b.Property<DateTimeOffset>("Created")
                         .HasColumnType("timestamp with time zone")
@@ -403,14 +687,23 @@ namespace lovedmemory.infrastructure.Migrations
                         .HasColumnType("text")
                         .HasColumnName("createdbyuserid");
 
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("description");
-
                     b.Property<DateTimeOffset>("Edited")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("edited");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("firstname");
+
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("gender");
+
+                    b.Property<bool>("IsPrivate")
+                        .HasColumnType("boolean")
+                        .HasColumnName("isprivate");
 
                     b.Property<DateTimeOffset?>("LastModified")
                         .HasColumnType("timestamp with time zone")
@@ -420,20 +713,29 @@ namespace lovedmemory.infrastructure.Migrations
                         .HasColumnType("text")
                         .HasColumnName("lastmodifiedbyuserid");
 
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("lastname");
+
                     b.Property<string>("MainImageUrl")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("mainimageurl");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("OtherNames")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("name");
+                        .HasColumnName("othernames");
 
-                    b.Property<string>("NickName")
+                    b.Property<string>("PersonalPhrase")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("nickname");
+                        .HasColumnName("personalphrase");
+
+                    b.Property<bool>("Published")
+                        .HasColumnType("boolean")
+                        .HasColumnName("published");
 
                     b.Property<DateTimeOffset>("RunDate")
                         .HasColumnType("timestamp with time zone")
@@ -443,6 +745,11 @@ namespace lovedmemory.infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("slug");
+
+                    b.Property<string>("Template")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("template");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -455,6 +762,8 @@ namespace lovedmemory.infrastructure.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_tributes");
+
+                    b.HasIndex("CoverPhotoId");
 
                     b.HasIndex("CreatedByUserId");
 
@@ -518,6 +827,39 @@ namespace lovedmemory.infrastructure.Migrations
                         .HasConstraintName("fk_aspnetusertokens_aspnetusers_userid");
                 });
 
+            modelBuilder.Entity("lovedmemory.Domain.Entities.Other.RolePermission", b =>
+                {
+                    b.HasOne("lovedmemory.Domain.Entities.Other.Permission", "Permission")
+                        .WithMany()
+                        .HasForeignKey("PermissionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_rolepermissions_permissions_permissionid");
+
+                    b.Navigation("Permission");
+                });
+
+            modelBuilder.Entity("lovedmemory.domain.Entities.Audio", b =>
+                {
+                    b.HasOne("lovedmemory.domain.Entities.AppUser", "AddedBy")
+                        .WithMany()
+                        .HasForeignKey("AddedById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_audio_aspnetusers_addedbyid");
+
+                    b.HasOne("lovedmemory.domain.Entities.Tribute", "Tribute")
+                        .WithMany("Audios")
+                        .HasForeignKey("TributeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_audio_tributes_tributeid");
+
+                    b.Navigation("AddedBy");
+
+                    b.Navigation("Tribute");
+                });
+
             modelBuilder.Entity("lovedmemory.domain.Entities.Comment", b =>
                 {
                     b.HasOne("lovedmemory.domain.Entities.Comment", null)
@@ -533,13 +875,63 @@ namespace lovedmemory.infrastructure.Migrations
                         .HasConstraintName("fk_comments_tributes_tributeid");
                 });
 
+            modelBuilder.Entity("lovedmemory.domain.Entities.ExtraDetails", b =>
+                {
+                    b.HasOne("lovedmemory.domain.Entities.Tribute", null)
+                        .WithOne("ExtraDetails")
+                        .HasForeignKey("lovedmemory.domain.Entities.ExtraDetails", "TributeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_tributedetails_tributes_tributeid");
+                });
+
+            modelBuilder.Entity("lovedmemory.domain.Entities.Gallery", b =>
+                {
+                    b.HasOne("lovedmemory.domain.Entities.AppUser", "AddedBy")
+                        .WithMany()
+                        .HasForeignKey("AddedById")
+                        .HasConstraintName("fk_gallary_aspnetusers_addedbyid");
+
+                    b.HasOne("lovedmemory.domain.Entities.Tribute", "Tribute")
+                        .WithMany("Gallery")
+                        .HasForeignKey("TributeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_gallary_tributes_tributeid");
+
+                    b.Navigation("AddedBy");
+
+                    b.Navigation("Tribute");
+                });
+
+            modelBuilder.Entity("lovedmemory.domain.Entities.LifeStory", b =>
+                {
+                    b.HasOne("lovedmemory.domain.Entities.Tribute", "Tribute")
+                        .WithOne("LifeStory")
+                        .HasForeignKey("lovedmemory.domain.Entities.LifeStory", "TributeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_lifestory_tributes_tributeid");
+
+                    b.Navigation("Tribute");
+                });
+
             modelBuilder.Entity("lovedmemory.domain.Entities.Tribute", b =>
                 {
+                    b.HasOne("lovedmemory.domain.Entities.CoverPhoto", "CoverPhoto")
+                        .WithMany()
+                        .HasForeignKey("CoverPhotoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_tributes_coverphoto_coverphotoid");
+
                     b.HasOne("lovedmemory.domain.Entities.AppUser", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("CoverPhoto");
 
                     b.Navigation("CreatedByUser");
                 });
@@ -551,7 +943,15 @@ namespace lovedmemory.infrastructure.Migrations
 
             modelBuilder.Entity("lovedmemory.domain.Entities.Tribute", b =>
                 {
+                    b.Navigation("Audios");
+
                     b.Navigation("Comments");
+
+                    b.Navigation("ExtraDetails");
+
+                    b.Navigation("Gallery");
+
+                    b.Navigation("LifeStory");
                 });
 #pragma warning restore 612, 618
         }

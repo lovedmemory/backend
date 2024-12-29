@@ -1,5 +1,5 @@
 ﻿using lovedmemory.application.DTOs;
-using lovedmemory.infrastructure.Security.Auth;
+using lovedmemory.Infrastructure.Security.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -46,7 +46,11 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Register([FromBody] RegisterDto request)
     {
         var response = await _authService.Register(request);
+        if (response.IsSuccess)
+        {
+            return Ok(response);
+        }
 
-        return Ok(response);
+        return StatusCode(500, response.Errors);
     }
 }

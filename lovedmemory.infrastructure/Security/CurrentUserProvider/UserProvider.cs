@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Http;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
-namespace lovedmemory.infrastructure.Security.CurrentUserProvider
+namespace lovedmemory.Infrastructure.Security.CurrentUserProvider
 {
-    public class UserProvider :IUserProvider
+    public class UserProvider : IUserProvider
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
 
@@ -16,21 +16,27 @@ namespace lovedmemory.infrastructure.Security.CurrentUserProvider
 
         public CurrentUser GetCurrentUser()
         {
+            var user = _httpContextAccessor.HttpContext.User;
+
             if (_httpContextAccessor.HttpContext == null)
             {
                 throw new Exception();
             }
-            if (_httpContextAccessor.HttpContext.User?.IsAuthenticated()==false)
+            if (user?.Identity == null || !user.Identity.IsAuthenticated)
+            {
+                throw new Exception("User is not authenticated.");
+            }
+            if (_httpContextAccessor.HttpContext.User?.IsAuthenticated() == false)
             {
                 throw new Exception();
             }
+            var _claims = _httpContextAccessor.HttpContext!.User.Claims;
+            string id = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
-            string id = GetSingleClaimValue(ClaimTypes.NameIdentifier);
             var permissions = GetClaimValues("permissions");
             var roles = GetClaimValues(ClaimTypes.Role);
-            // var policies = GetClaimValues(ClaimTypes.)
             var firstName = GetSingleClaimValue(JwtRegisteredClaimNames.Name);
-            
+
             var email = GetSingleClaimValue(ClaimTypes.Email);
 
             return new CurrentUser(id, firstName, "", email, permissions, roles);
@@ -43,7 +49,7 @@ namespace lovedmemory.infrastructure.Security.CurrentUserProvider
                 .ToList();
 
         private string GetSingleClaimValue(string claimType) =>
-            _httpContextAccessor.HttpContext!.User.Claims
+            _httpContextAccessor.HttpContext!.User.Claims 
                 .Single(claim => claim.Type == claimType)
                 .Value;
     }

@@ -10,6 +10,8 @@ public class AppUser : IdentityUser
     public string? LastName { get; set; }
     public string? OtherName { get; set; }
     public string? NickName { get; set; }
+    public string? Avatar { get; set; }
+    public string? CountryCode { get; set; }
     [NotMapped]
     public string FullName
     {
@@ -21,5 +23,6 @@ public class AppUser : IdentityUser
                 return $"{FirstName} {LastName}";
         }
     }
+
 
 }

@@ -1,11 +1,9 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using lovedmemory.domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using lovedmemory.domain.Entities;
 
-namespace lovedmemory.infrastructure.Security.CurrentUserProvider;
+namespace lovedmemory.Infrastructure.Security.CurrentUserProvider;
 
 public class UserService : IUserService
 {

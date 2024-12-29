@@ -10,13 +10,7 @@ namespace lovedmemory.application.DTOs
         [Required]
         public string? Password { get; set; }
     }
-    public class AppUserDto
-    {
-        public string Name { get; set; }
-        public string Email { get; set; }
-        public string Phone { get; set; }
-        public string NickName { get; set; }
-    }
+
         public class RegisterDto
     {
         [Required]

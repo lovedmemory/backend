@@ -6,6 +6,7 @@ using lovedmemory.domain.Entities;
 using lovedmemory.application.DTOs;
 using lovedmemory.application.Utils;
 using System;
+using lovedmemory.domain;
 
 namespace lovedmemory.application.Services
 {
@@ -13,12 +14,10 @@ namespace lovedmemory.application.Services
     {
         private readonly IAppDbContext _context;
         private readonly ILogger<TributeService> _logger;
-        private readonly IDateTime _dateTime;
-        public TributeService(IAppDbContext context, ILogger<TributeService> logger, IDateTime dateTime)
+        public TributeService(IAppDbContext context, ILogger<TributeService> logger)
         {
             _context = context;
             _logger = logger;
-            _dateTime = dateTime;
         }
 
 
@@ -33,8 +32,8 @@ namespace lovedmemory.application.Services
               .Select(t => new TributeDto
               {
                   Id = t.Id,
-                  Name = t.FullName,
-                  Description = t.Description,
+                  Name = t.FullName(),
+                  Description = t.About,
                   Title = t.Title,
                   RunDate = t.RunDate,
                   Created = t.Created,
@@ -79,7 +78,7 @@ namespace lovedmemory.application.Services
               .Select(t => new TributeDto
               {
                   Id = t.Id,
-                  Name = t.FullName,
+                  Name = t.FullName(),
                   RunDate = t.RunDate,
                   Created = t.Created,
                   Active = t.Active,
@@ -128,12 +127,12 @@ namespace lovedmemory.application.Services
                 .Select(t => new TributeDto
                 {
                     Id = t.Id,
-                    Name = t.FullName,
+                    Name = t.FullName(),
                     RunDate = t.RunDate,
                     Created = t.Created,
                     Active = t.Active,
                     Title = t.Title,
-                    Description = t.Description,
+                    Description = t.About,
                     //NickName = t.NickName,
                     Slug = t.Slug,
                     MainImageUrl = t.MainImageUrl,
@@ -169,12 +168,12 @@ namespace lovedmemory.application.Services
             Tribute _tribute = new()
             {
                 Active = true,
-                Created = _dateTime.Now,
+                Created = DateTimeOffset.Now,
                 RunDate = tribute.RunDate,
                 FirstName = tribute.TributeName,
                 Published = tribute.Published,
                 Title = tribute.Title,
-                Description = tribute.Description,
+                About = tribute.Description,
                // NickName = tribute.NickName,
                 Slug = _slug,
                 MainImageUrl = tribute.MainImageUrl,
@@ -192,7 +191,7 @@ namespace lovedmemory.application.Services
             {
                 return null;
             }
-            string _slug = SlugGenerator.GenerateSlug(_tribute.FullName);
+            string _slug = SlugGenerator.GenerateSlug(_tribute.FullName());
             _tribute.Slug = _slug;
             try
             {

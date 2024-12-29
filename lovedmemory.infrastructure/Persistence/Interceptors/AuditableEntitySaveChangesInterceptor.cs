@@ -1,6 +1,6 @@
 ﻿using lovedmemory.application.Common.Interfaces;
 using lovedmemory.domain.Common;
-using lovedmemory.infrastructure.Security.CurrentUserProvider;
+using lovedmemory.Infrastructure.Security.CurrentUserProvider;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -10,12 +10,10 @@ namespace lovedmemory.Infrastructure.Persistence.Interceptors;
 public class AuditableEntitySaveChangesInterceptor : SaveChangesInterceptor
 {
     private readonly IUserProvider _userProvider;
-    private readonly IDateTime _dateTime;
 
     public AuditableEntitySaveChangesInterceptor(
-        IDateTime dateTime, IUserProvider userProvider)
+         IUserProvider userProvider)
     {
-        _dateTime = dateTime;
         _userProvider = userProvider;
     }
 
@@ -42,13 +40,13 @@ public class AuditableEntitySaveChangesInterceptor : SaveChangesInterceptor
             if (entry.State == EntityState.Added)
             {
                 entry.Entity.CreatedByUserId = _userProvider.GetCurrentUser().Id;
-                entry.Entity.Created = _dateTime.Now;
+                entry.Entity.Created = DateTimeOffset.Now;
             } 
 
             if (entry.State == EntityState.Added || entry.State == EntityState.Modified || entry.HasChangedOwnedEntities())
             {
                 entry.Entity.LastModifiedByUserId = _userProvider.GetCurrentUser().Id;
-                entry.Entity.LastModified = _dateTime.Now;
+                entry.Entity.LastModified = DateTimeOffset.Now;
             }
         }
     }
