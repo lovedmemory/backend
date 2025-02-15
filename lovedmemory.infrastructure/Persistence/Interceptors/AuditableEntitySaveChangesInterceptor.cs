@@ -1,6 +1,6 @@
 ﻿using lovedmemory.application.Common.Interfaces;
+using lovedmemory.application.Contracts;
 using lovedmemory.domain.Common;
-using lovedmemory.Infrastructure.Security.CurrentUserProvider;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Diagnostics;

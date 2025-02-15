@@ -371,6 +371,10 @@ namespace lovedmemory.infrastructure.Migrations
                         .HasColumnType("text")
                         .HasColumnName("description");
 
+                    b.Property<int>("MemorialId")
+                        .HasColumnType("integer")
+                        .HasColumnName("memorial_id");
+
                     b.Property<string>("Tags")
                         .IsRequired()
                         .HasColumnType("text")
@@ -380,10 +384,6 @@ namespace lovedmemory.infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("title");
-
-                    b.Property<int>("TributeId")
-                        .HasColumnType("integer")
-                        .HasColumnName("tribute_id");
 
                     b.Property<string>("Url")
                         .IsRequired()
@@ -401,8 +401,8 @@ namespace lovedmemory.infrastructure.Migrations
                     b.HasIndex("AddedById")
                         .HasDatabaseName("ix_audio_added_by_id");
 
-                    b.HasIndex("TributeId")
-                        .HasDatabaseName("ix_audio_tribute_id");
+                    b.HasIndex("MemorialId")
+                        .HasDatabaseName("ix_audio_memorial_id");
 
                     b.ToTable("audio", "lovedmemory");
                 });
@@ -446,6 +446,10 @@ namespace lovedmemory.infrastructure.Migrations
                         .HasColumnType("text")
                         .HasColumnName("last_modified_by_user_id");
 
+                    b.Property<int>("MemorialId")
+                        .HasColumnType("integer")
+                        .HasColumnName("memorial_id");
+
                     b.Property<int?>("ParentCommentId")
                         .HasColumnType("integer")
                         .HasColumnName("parent_comment_id");
@@ -453,10 +457,6 @@ namespace lovedmemory.infrastructure.Migrations
                     b.Property<int>("TreeLevel")
                         .HasColumnType("integer")
                         .HasColumnName("tree_level");
-
-                    b.Property<int>("TributeId")
-                        .HasColumnType("integer")
-                        .HasColumnName("tribute_id");
 
                     b.Property<bool>("Visible")
                         .HasColumnType("boolean")
@@ -468,10 +468,58 @@ namespace lovedmemory.infrastructure.Migrations
                     b.HasIndex("CommentId")
                         .HasDatabaseName("ix_comments_comment_id");
 
-                    b.HasIndex("TributeId")
-                        .HasDatabaseName("ix_comments_tribute_id");
+                    b.HasIndex("MemorialId")
+                        .HasDatabaseName("ix_comments_memorial_id");
 
                     b.ToTable("comments", "lovedmemory");
+                });
+
+            modelBuilder.Entity("lovedmemory.domain.Entities.Contact", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("email");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("first_name");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("last_name");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("message");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("phone");
+
+                    b.Property<bool>("PrivacyAgree")
+                        .HasColumnType("boolean")
+                        .HasColumnName("privacy_agree");
+
+                    b.HasKey("Id")
+                        .HasName("pk_contact_messages");
+
+                    b.ToTable("contact_messages", "lovedmemory");
                 });
 
             modelBuilder.Entity("lovedmemory.domain.Entities.CoverPhoto", b =>
@@ -492,6 +540,10 @@ namespace lovedmemory.infrastructure.Migrations
                         .HasColumnType("text")
                         .HasColumnName("image_url");
 
+                    b.Property<int?>("MemorialId")
+                        .HasColumnType("integer")
+                        .HasColumnName("memorial_id");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("text")
@@ -503,6 +555,10 @@ namespace lovedmemory.infrastructure.Migrations
 
                     b.HasKey("CoverPhotoId")
                         .HasName("pk_cover_photo");
+
+                    b.HasIndex("MemorialId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_cover_photo_memorial_id");
 
                     b.ToTable("cover_photo", "lovedmemory");
                 });
@@ -530,64 +586,61 @@ namespace lovedmemory.infrastructure.Migrations
                         .HasColumnType("text")
                         .HasColumnName("event_location");
 
-                    b.Property<int>("TributeId")
+                    b.Property<int>("MemorialId")
                         .HasColumnType("integer")
-                        .HasColumnName("tribute_id");
+                        .HasColumnName("memorial_id");
 
                     b.HasKey("Id")
                         .HasName("pk_event_details");
 
-                    b.ToTable("eventdetails", "lovedmemory");
+                    b.ToTable("event_details", "lovedmemory");
                 });
 
             modelBuilder.Entity("lovedmemory.domain.Entities.ExtraDetails", b =>
                 {
-                    b.Property<int>("TributeId")
+                    b.Property<int>("MemorialId")
                         .HasColumnType("integer")
-                        .HasColumnName("tribute_id");
+                        .HasColumnName("memorial_id");
 
                     b.Property<string>("BirthCountry")
                         .HasColumnType("text")
                         .HasColumnName("birth_country");
 
-                    b.Property<DateTimeOffset>("DateOfBirth")
-                        .HasColumnType("timestamp with time zone")
+                    b.Property<DateOnly?>("DateOfBirth")
+                        .HasColumnType("date")
                         .HasColumnName("date_of_birth");
 
-                    b.Property<DateTimeOffset>("DateOfDeath")
-                        .HasColumnType("timestamp with time zone")
+                    b.Property<DateOnly?>("DateOfDeath")
+                        .HasColumnType("date")
                         .HasColumnName("date_of_death");
 
                     b.Property<string>("DeathCountry")
-                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("death_country");
 
                     b.Property<string>("LifeStory")
-                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("life_story");
 
                     b.Property<string>("NickName")
-                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("nick_name");
 
-                    b.Property<int>("Relationship")
+                    b.Property<int?>("Relationship")
                         .HasColumnType("integer")
                         .HasColumnName("relationship");
 
-                    b.HasKey("TributeId")
-                        .HasName("pk_tributedetails");
+                    b.HasKey("MemorialId")
+                        .HasName("pk_extra_details");
 
-                    b.ToTable("tributedetails", "lovedmemory");
+                    b.ToTable("extra_details", "lovedmemory");
                 });
 
             modelBuilder.Entity("lovedmemory.domain.Entities.Gallery", b =>
                 {
-                    b.Property<int>("TributeId")
+                    b.Property<int>("MemorialId")
                         .HasColumnType("integer")
-                        .HasColumnName("tribute_id");
+                        .HasColumnName("memorial_id");
 
                     b.Property<bool>("Active")
                         .HasColumnType("boolean")
@@ -634,7 +687,7 @@ namespace lovedmemory.infrastructure.Migrations
                         .HasColumnType("text")
                         .HasColumnName("user_id");
 
-                    b.HasKey("TributeId")
+                    b.HasKey("MemorialId")
                         .HasName("pk_gallery");
 
                     b.HasIndex("AddedById")
@@ -645,9 +698,9 @@ namespace lovedmemory.infrastructure.Migrations
 
             modelBuilder.Entity("lovedmemory.domain.Entities.LifeStory", b =>
                 {
-                    b.Property<int>("TributeId")
+                    b.Property<int>("MemorialId")
                         .HasColumnType("integer")
-                        .HasColumnName("tribute_id");
+                        .HasColumnName("memorial_id");
 
                     b.Property<string>("Story")
                         .IsRequired()
@@ -660,13 +713,13 @@ namespace lovedmemory.infrastructure.Migrations
                         .HasColumnType("character varying(100)")
                         .HasColumnName("story_section");
 
-                    b.HasKey("TributeId")
-                        .HasName("pk_lifestory");
+                    b.HasKey("MemorialId")
+                        .HasName("pk_life_story");
 
-                    b.ToTable("lifestory", "tributes");
+                    b.ToTable("life_story", "lovedmemory");
                 });
 
-            modelBuilder.Entity("lovedmemory.domain.Entities.Tribute", b =>
+            modelBuilder.Entity("lovedmemory.domain.Entities.Memorial", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -675,18 +728,13 @@ namespace lovedmemory.infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("About")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("about");
-
                     b.Property<bool>("Active")
                         .HasColumnType("boolean")
                         .HasColumnName("active");
 
-                    b.Property<int>("CoverPhotoId")
-                        .HasColumnType("integer")
-                        .HasColumnName("cover_photo_id");
+                    b.Property<string>("Biography")
+                        .HasColumnType("text")
+                        .HasColumnName("biography");
 
                     b.Property<DateTimeOffset>("Created")
                         .HasColumnType("timestamp with time zone")
@@ -697,7 +745,7 @@ namespace lovedmemory.infrastructure.Migrations
                         .HasColumnType("text")
                         .HasColumnName("created_by_user_id");
 
-                    b.Property<DateTimeOffset>("Edited")
+                    b.Property<DateTimeOffset?>("Edited")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("edited");
 
@@ -729,12 +777,10 @@ namespace lovedmemory.infrastructure.Migrations
                         .HasColumnName("last_name");
 
                     b.Property<string>("MainImageUrl")
-                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("main_image_url");
 
                     b.Property<string>("OtherNames")
-                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("other_names");
 
@@ -771,15 +817,12 @@ namespace lovedmemory.infrastructure.Migrations
                         .HasColumnName("view_count");
 
                     b.HasKey("Id")
-                        .HasName("pk_tributes");
-
-                    b.HasIndex("CoverPhotoId")
-                        .HasDatabaseName("ix_tributes_cover_photo_id");
+                        .HasName("pk_memorials");
 
                     b.HasIndex("CreatedByUserId")
-                        .HasDatabaseName("ix_tributes_created_by_user_id");
+                        .HasDatabaseName("ix_memorials_created_by_user_id");
 
-                    b.ToTable("tributes", "lovedmemory");
+                    b.ToTable("memorials", "lovedmemory");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -860,16 +903,16 @@ namespace lovedmemory.infrastructure.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_audio_users_added_by_id");
 
-                    b.HasOne("lovedmemory.domain.Entities.Tribute", "Tribute")
+                    b.HasOne("lovedmemory.domain.Entities.Memorial", "Memorial")
                         .WithMany("Audios")
-                        .HasForeignKey("TributeId")
+                        .HasForeignKey("MemorialId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_audio_tributes_tribute_id");
+                        .HasConstraintName("fk_audio_memorials_memorial_id");
 
                     b.Navigation("AddedBy");
 
-                    b.Navigation("Tribute");
+                    b.Navigation("Memorial");
                 });
 
             modelBuilder.Entity("lovedmemory.domain.Entities.Comment", b =>
@@ -879,22 +922,33 @@ namespace lovedmemory.infrastructure.Migrations
                         .HasForeignKey("CommentId")
                         .HasConstraintName("fk_comments_comments_comment_id");
 
-                    b.HasOne("lovedmemory.domain.Entities.Tribute", null)
+                    b.HasOne("lovedmemory.domain.Entities.Memorial", null)
                         .WithMany("Comments")
-                        .HasForeignKey("TributeId")
+                        .HasForeignKey("MemorialId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_comments_tributes_tribute_id");
+                        .HasConstraintName("fk_comments_memorials_memorial_id");
+                });
+
+            modelBuilder.Entity("lovedmemory.domain.Entities.CoverPhoto", b =>
+                {
+                    b.HasOne("lovedmemory.domain.Entities.Memorial", "Memorial")
+                        .WithOne("CoverPhoto")
+                        .HasForeignKey("lovedmemory.domain.Entities.CoverPhoto", "MemorialId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("fk_cover_photo_memorials_memorial_id");
+
+                    b.Navigation("Memorial");
                 });
 
             modelBuilder.Entity("lovedmemory.domain.Entities.ExtraDetails", b =>
                 {
-                    b.HasOne("lovedmemory.domain.Entities.Tribute", null)
+                    b.HasOne("lovedmemory.domain.Entities.Memorial", null)
                         .WithOne("ExtraDetails")
-                        .HasForeignKey("lovedmemory.domain.Entities.ExtraDetails", "TributeId")
+                        .HasForeignKey("lovedmemory.domain.Entities.ExtraDetails", "MemorialId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_tribute_details_tributes_tribute_id");
+                        .HasConstraintName("fk_extra_details_memorials_memorial_id");
                 });
 
             modelBuilder.Entity("lovedmemory.domain.Entities.Gallery", b =>
@@ -904,47 +958,38 @@ namespace lovedmemory.infrastructure.Migrations
                         .HasForeignKey("AddedById")
                         .HasConstraintName("fk_gallary_users_added_by_id");
 
-                    b.HasOne("lovedmemory.domain.Entities.Tribute", "Tribute")
+                    b.HasOne("lovedmemory.domain.Entities.Memorial", "Memorial")
                         .WithMany("Gallery")
-                        .HasForeignKey("TributeId")
+                        .HasForeignKey("MemorialId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_gallary_tributes_tribute_id");
+                        .HasConstraintName("fk_gallary_memorials_memorial_id");
 
                     b.Navigation("AddedBy");
 
-                    b.Navigation("Tribute");
+                    b.Navigation("Memorial");
                 });
 
             modelBuilder.Entity("lovedmemory.domain.Entities.LifeStory", b =>
                 {
-                    b.HasOne("lovedmemory.domain.Entities.Tribute", "Tribute")
+                    b.HasOne("lovedmemory.domain.Entities.Memorial", "Memorial")
                         .WithOne("LifeStory")
-                        .HasForeignKey("lovedmemory.domain.Entities.LifeStory", "TributeId")
+                        .HasForeignKey("lovedmemory.domain.Entities.LifeStory", "MemorialId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_life_story_tributes_tribute_id");
+                        .HasConstraintName("fk_life_story_memorials_memorial_id");
 
-                    b.Navigation("Tribute");
+                    b.Navigation("Memorial");
                 });
 
-            modelBuilder.Entity("lovedmemory.domain.Entities.Tribute", b =>
+            modelBuilder.Entity("lovedmemory.domain.Entities.Memorial", b =>
                 {
-                    b.HasOne("lovedmemory.domain.Entities.CoverPhoto", "CoverPhoto")
-                        .WithMany()
-                        .HasForeignKey("CoverPhotoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_tributes_cover_photo_cover_photo_id");
-
                     b.HasOne("lovedmemory.domain.Entities.AppUser", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
-                        .HasConstraintName("fk_tributes_aspnetusers_created_by_user_id");
-
-                    b.Navigation("CoverPhoto");
+                        .HasConstraintName("fk_memorials_aspnetusers_created_by_user_id");
 
                     b.Navigation("CreatedByUser");
                 });
@@ -954,13 +999,16 @@ namespace lovedmemory.infrastructure.Migrations
                     b.Navigation("Replies");
                 });
 
-            modelBuilder.Entity("lovedmemory.domain.Entities.Tribute", b =>
+            modelBuilder.Entity("lovedmemory.domain.Entities.Memorial", b =>
                 {
                     b.Navigation("Audios");
 
                     b.Navigation("Comments");
 
-                    b.Navigation("ExtraDetails");
+                    b.Navigation("CoverPhoto");
+
+                    b.Navigation("ExtraDetails")
+                        .IsRequired();
 
                     b.Navigation("Gallery");
 

@@ -14,6 +14,7 @@ using lovedmemory.Infrastructure.Data;
 using lovedmemory.Infrastructure.Persistence.Interceptors;
 using lovedmemory.application.Common.Interfaces;
 using lovedmemory.domain.Entities;
+using lovedmemory.application.Contracts;
 
 
 namespace lovedmemory.Infrastructure;
@@ -75,7 +76,6 @@ public static class DependencyInjection
 
         // Register required services
         services.AddScoped<IAuthorizationHandler, PermissionHandler>();
-        services.AddScoped<IUserProvider, UserProvider>();
         services.AddScoped<IRoleService, RoleService>();
         services.AddScoped<IRolePermissionService, RolePermissionService>();
 

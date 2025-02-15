@@ -4,7 +4,7 @@ namespace lovedmemory.domain
 {
     public static class DomainEntityExtensions
     {
-        public static string FullName(this Tribute value)
+        public static string FullName(this Memorial value)
             => $"{value.FirstName} {value.LastName}";
     }
 }

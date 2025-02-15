@@ -4,6 +4,7 @@ using Serilog;
 using Serilog.Events;
 using lovedmemory.Infrastructure.Security.CurrentUserProvider;
 using lovedmemory.Infrastructure;
+using Microsoft.AspNetCore.Identity;
 
 
 
@@ -33,7 +34,14 @@ builder.WebHost.ConfigureKestrel(opts =>
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplicationServices();
 builder.Services.AddScoped<IUserService, UserService>();
-
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequiredLength = 4;
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+    options.Lockout.MaxFailedAccessAttempts = 5;
+    options.Lockout.AllowedForNewUsers = true;
+});
 builder.Services.AddHttpContextAccessor();
 
 // Add services to the container.

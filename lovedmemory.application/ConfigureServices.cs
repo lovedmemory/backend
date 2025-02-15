@@ -10,9 +10,12 @@ public static class ConfigureServices
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
         //services.AddAutoMapper(Assembly.GetExecutingAssembly());
-       // services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-        services.AddScoped<ITributeService, TributeService>();
+        // services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+        services.AddScoped<IUserProvider, UserProvider>();
+
+        services.AddScoped<IMemorialService, MemorialService>();
         services.AddScoped<ICommentService, CommentService>();
+        services.AddScoped<IContactMessageService, ContactMessageservice>();
         return services;
     }
 }

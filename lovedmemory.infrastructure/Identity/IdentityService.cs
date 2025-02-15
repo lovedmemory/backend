@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using lovedmemory.application.Common.Interfaces;
 using lovedmemory.application.Common.Models;
 using lovedmemory.domain.Entities;
+using Microsoft.Extensions.Logging;
 
 namespace lovedmemory.Infrastructure.Identity;
 
@@ -12,15 +13,17 @@ public class IdentityService : IIdentityService
     private readonly UserManager<AppUser> _userManager;
     private readonly IUserClaimsPrincipalFactory<AppUser> _userClaimsPrincipalFactory;
     private readonly IAuthorizationService _authorizationService;
-
+    private readonly ILogger<IdentityService> _logger;
     public IdentityService(
         UserManager<AppUser> userManager,
         IUserClaimsPrincipalFactory<AppUser> userClaimsPrincipalFactory,
-        IAuthorizationService authorizationService)
+        IAuthorizationService authorizationService,
+        ILogger<IdentityService> logger)
     {
         _userManager = userManager;
         _userClaimsPrincipalFactory = userClaimsPrincipalFactory;
         _authorizationService = authorizationService;
+        _logger = logger;
     }
 
     public async Task<string?> GetUserNameAsync(string userId)
@@ -46,10 +49,9 @@ public class IdentityService : IIdentityService
         }
         else
         {
-            // If user creation failed, you might want to log the errors or handle them appropriately.
-            // This example assumes a simple Result<bool> class.
-
-            return (Result<bool>.Failure(result.Errors.Select(error => error.Description).ToList()), null);
+       
+            _logger.LogError(result.Errors.Select(error => error.Description).FirstOrDefault());
+            return (Result<bool>.Failure(result.Errors.Select(error => error.Description).FirstOrDefault()), null);
 
         }
     }

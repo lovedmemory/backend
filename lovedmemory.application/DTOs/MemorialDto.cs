@@ -2,7 +2,7 @@
 
 namespace lovedmemory.application.DTOs
 {
-    public class TributeDto
+    public class MemorialDto
     {
         public int? Id { get; set; }
         public int? ViewCount { get; set; }
@@ -19,16 +19,5 @@ namespace lovedmemory.application.DTOs
         public string AuthorName { get; set; }
         public string AuthorEmail { get; set; }
     }
-    public class CreateTributeDto
-    {
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public string TributeName { get; set; }
-        public string? NickName { get; set; }
-        public DateTimeOffset RunDate { get; set; }
-        public bool Published { get; set; }
-        public string? Slug { get; set; }
-        public string MainImageUrl { get; set; }
 
-    }
 }

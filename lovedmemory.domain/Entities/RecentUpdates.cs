@@ -2,7 +2,7 @@
 {
     public class RecentUpdates
     {
-        public int TributeId { get; set; }
+        public int MemorialId { get; set; }
         public string UpdateType { get; set; }
         public string UserId { get; set; }
         public bool IsPublic { get; set; }

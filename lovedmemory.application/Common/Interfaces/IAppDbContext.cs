@@ -5,9 +5,12 @@ namespace lovedmemory.application.Common.Interfaces
 {
     public interface IAppDbContext
     {
-        DbSet<Tribute> Tributes { get; set; }
+        DbSet<Memorial> Memorials { get; set; }
+        DbSet<ExtraDetails> ExtraDetails { get; set; }
         DbSet<Comment> Comments { get; set; }
         DbSet<EventDetail> EventDetails { get; set; }
+        DbSet<Contact> ContactMessages { get; set; }
+
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);   
     }
 }

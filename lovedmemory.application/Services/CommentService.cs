@@ -28,7 +28,7 @@ namespace lovedmemory.application.Services
                 {
                     Details = Comment.Details,
                     ParentCommentId = Comment.ParentCommentId,
-                    TributeId = Comment.TributeId,
+                    MemorialId = Comment.MemorialId,
                     Visible = true
 
                 };
@@ -63,7 +63,7 @@ namespace lovedmemory.application.Services
                     Edited = true,
                     Details = Comment.Details,
                     ParentCommentId = Comment.ParentCommentId,
-                    TributeId = Comment.Id,
+                    MemorialId = Comment.Id,
                     Visible = existingComment.Visible
 
                 };

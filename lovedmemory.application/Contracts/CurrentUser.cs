@@ -1,4 +1,4 @@
-namespace lovedmemory.Infrastructure.Security.CurrentUserProvider;
+namespace lovedmemory.application.Contracts;
 
 public record CurrentUser(
     string Id,

@@ -4,20 +4,20 @@
     {
         public bool IsSuccess { get; }
         public T Value { get; }
-        public IEnumerable<string> Errors { get; }
+        public string Error { get; }
 
-        protected Result(bool isSuccess, T value, IEnumerable<string> errors)
+        protected Result(bool isSuccess, T value, string error)
         {
             IsSuccess = isSuccess;
             Value = value;
-            Errors = errors;
+            Error = error;
         }
 
         public static Result<T> Success(T value) =>
-            new(true, value, Enumerable.Empty<string>());
+            new(true, value, string.Empty);
 
-        public static Result<T> Failure(IEnumerable<string> errors) =>
-            new Result<T>(false, default, errors);
+        public static Result<T> Failure(string error) =>
+            new Result<T>(false, default, error);
     }
 }
 //namespace CleanArchitecture.Application.Common.Models;

@@ -10,7 +10,7 @@ using System.Net;
 namespace lovedmemory.web.Controllers
 {
     [Authorize]
-    [Route("api/[controller]")]
+    [Route("api/comments")]
     [ApiController]
     public class CommentsController : ControllerBase
     {

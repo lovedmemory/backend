@@ -28,7 +28,7 @@ public class AuthService : IAuthService
         //var userByUsername = await _userManager.FindByNameAsync(request.Username);
         if (userByEmail is not null)
         {
-            throw new ArgumentException($"User with email {request.Email} already exists.");
+            return Result<UserDto>.Failure($"User with email {request.Email} already exists");
         }
 
         AppUser user = new()
@@ -53,7 +53,7 @@ public class AuthService : IAuthService
                     stringBuilder.AppendLine(error.Description);
                 }
                 _logger.LogError( "Unable to register user. {err}", stringBuilder.ToString());
-                return Result<UserDto>.Failure(result.Errors.Select(error => error.Description).ToList());
+                return Result<UserDto>.Failure("Unable to register user");
             }
 
            var res =  await Login(new LoginDto { Email = request.Email, Password = request.Password });
@@ -62,7 +62,7 @@ public class AuthService : IAuthService
         catch (Exception ex)
         {
             _logger.LogError( "Unable to register user. {err}", ex.Message);
-            return Result<UserDto>.Failure([ex.Message]);
+            return Result<UserDto>.Failure("Unable to register user");
         }
     }
 

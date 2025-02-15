@@ -2,9 +2,9 @@
 {
     public class LifeStory
     {
-        public int TributeId { get; set; }
+        public int MemorialId { get; set; }
         public string StorySection { get; set; }
         public string Story { get; set; }
-        public virtual Tribute Tribute { get; set; }
+        public virtual Memorial Memorial { get; set; }
     }
 }

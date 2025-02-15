@@ -1,9 +1,9 @@
 ﻿using lovedmemory.application.Contracts;
 using Microsoft.AspNetCore.Http;
-using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.JsonWebTokens;
 using System.Security.Claims;
 
-namespace lovedmemory.Infrastructure.Security.CurrentUserProvider
+namespace lovedmemory.application.Services
 {
     public class UserProvider : IUserProvider
     {
@@ -35,9 +35,9 @@ namespace lovedmemory.Infrastructure.Security.CurrentUserProvider
 
             var permissions = GetClaimValues("permissions");
             var roles = GetClaimValues(ClaimTypes.Role);
-            var firstName = GetSingleClaimValue(JwtRegisteredClaimNames.Name);
+            var firstName = "";
 
-            var email = GetSingleClaimValue(ClaimTypes.Email);
+            var email = GetClaimValues(ClaimTypes.Email).FirstOrDefault();
 
             return new CurrentUser(id, firstName, "", email, permissions, roles);
         }
@@ -49,7 +49,7 @@ namespace lovedmemory.Infrastructure.Security.CurrentUserProvider
                 .ToList();
 
         private string GetSingleClaimValue(string claimType) =>
-            _httpContextAccessor.HttpContext!.User.Claims 
+            _httpContextAccessor.HttpContext!.User.Claims
                 .Single(claim => claim.Type == claimType)
                 .Value;
     }

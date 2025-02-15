@@ -3,10 +3,10 @@ using lovedmemory.Infrastructure.Security.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AuthenticationApi.Controllers;
+namespace lovedmemory.web.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/auth")]
 public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
@@ -32,8 +32,8 @@ public class AuthController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error Logging in {user}",request.ToString());
-            return Unauthorized();
+            _logger.LogError(ex, "Error Logging in {user}", request.ToString());
+            return Unauthorized(new { ex.Message });
         }
 
     }
@@ -51,6 +51,6 @@ public class AuthController : ControllerBase
             return Ok(response);
         }
 
-        return StatusCode(500, response.Errors);
+        return StatusCode(500, new { Message = response.Error }); // BadRequest( response.Error);
     }
 }

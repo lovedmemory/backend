@@ -7,16 +7,13 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace lovedmemory.infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class initdb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.EnsureSchema(
                 name: "lovedmemory");
-
-            migrationBuilder.EnsureSchema(
-                name: "tributes");
 
             migrationBuilder.CreateTable(
                 name: "aspnetroles",
@@ -25,8 +22,8 @@ namespace lovedmemory.infrastructure.Migrations
                 {
                     id = table.Column<string>(type: "text", nullable: false),
                     name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    normalizedname = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    concurrencystamp = table.Column<string>(type: "text", nullable: true)
+                    normalized_name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    concurrency_stamp = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -39,26 +36,26 @@ namespace lovedmemory.infrastructure.Migrations
                 columns: table => new
                 {
                     id = table.Column<string>(type: "text", nullable: false),
-                    firstname = table.Column<string>(type: "text", nullable: false),
-                    lastname = table.Column<string>(type: "text", nullable: true),
-                    othername = table.Column<string>(type: "text", nullable: true),
-                    nickname = table.Column<string>(type: "text", nullable: true),
+                    first_name = table.Column<string>(type: "text", nullable: false),
+                    last_name = table.Column<string>(type: "text", nullable: true),
+                    other_name = table.Column<string>(type: "text", nullable: true),
+                    nick_name = table.Column<string>(type: "text", nullable: true),
                     avatar = table.Column<string>(type: "text", nullable: true),
-                    countrycode = table.Column<string>(type: "text", nullable: true),
-                    username = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    normalizedusername = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    country_code = table.Column<string>(type: "text", nullable: true),
+                    user_name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    normalized_user_name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    normalizedemail = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    emailconfirmed = table.Column<bool>(type: "boolean", nullable: false),
-                    passwordhash = table.Column<string>(type: "text", nullable: true),
-                    securitystamp = table.Column<string>(type: "text", nullable: true),
-                    concurrencystamp = table.Column<string>(type: "text", nullable: true),
-                    phonenumber = table.Column<string>(type: "text", nullable: true),
-                    phonenumberconfirmed = table.Column<bool>(type: "boolean", nullable: false),
-                    twofactorenabled = table.Column<bool>(type: "boolean", nullable: false),
-                    lockoutend = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    lockoutenabled = table.Column<bool>(type: "boolean", nullable: false),
-                    accessfailedcount = table.Column<int>(type: "integer", nullable: false)
+                    normalized_email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    email_confirmed = table.Column<bool>(type: "boolean", nullable: false),
+                    password_hash = table.Column<string>(type: "text", nullable: true),
+                    security_stamp = table.Column<string>(type: "text", nullable: true),
+                    concurrency_stamp = table.Column<string>(type: "text", nullable: true),
+                    phone_number = table.Column<string>(type: "text", nullable: true),
+                    phone_number_confirmed = table.Column<bool>(type: "boolean", nullable: false),
+                    two_factor_enabled = table.Column<bool>(type: "boolean", nullable: false),
+                    lockout_end = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    lockout_enabled = table.Column<bool>(type: "boolean", nullable: false),
+                    access_failed_count = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -66,37 +63,40 @@ namespace lovedmemory.infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "coverphoto",
-                schema: "lovedmemory",
-                columns: table => new
-                {
-                    coverphotoid = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    imageurl = table.Column<string>(type: "text", nullable: false),
-                    title = table.Column<string>(type: "text", nullable: false),
-                    height = table.Column<int>(type: "integer", nullable: false),
-                    width = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_coverphoto", x => x.coverphotoid);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "eventdetails",
+                name: "contact_messages",
                 schema: "lovedmemory",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    tributeid = table.Column<int>(type: "integer", nullable: false),
-                    eventdate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    eventlocation = table.Column<string>(type: "text", nullable: false),
+                    first_name = table.Column<string>(type: "text", nullable: false),
+                    last_name = table.Column<string>(type: "text", nullable: false),
+                    email = table.Column<string>(type: "text", nullable: false),
+                    phone = table.Column<string>(type: "text", nullable: false),
+                    message = table.Column<string>(type: "text", nullable: false),
+                    privacy_agree = table.Column<bool>(type: "boolean", nullable: false),
+                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_contact_messages", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "event_details",
+                schema: "lovedmemory",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    memorial_id = table.Column<int>(type: "integer", nullable: false),
+                    event_date = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    event_location = table.Column<string>(type: "text", nullable: false),
                     details = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_eventdetails", x => x.id);
+                    table.PrimaryKey("pk_event_details", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -121,16 +121,16 @@ namespace lovedmemory.infrastructure.Migrations
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    roleid = table.Column<string>(type: "text", nullable: false),
-                    claimtype = table.Column<string>(type: "text", nullable: true),
-                    claimvalue = table.Column<string>(type: "text", nullable: true)
+                    role_id = table.Column<string>(type: "text", nullable: false),
+                    claim_type = table.Column<string>(type: "text", nullable: true),
+                    claim_value = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_aspnetroleclaims", x => x.id);
                     table.ForeignKey(
-                        name: "fk_aspnetroleclaims_aspnetroles_roleid",
-                        column: x => x.roleid,
+                        name: "fk_aspnetroleclaims_aspnetroles_role_id",
+                        column: x => x.role_id,
                         principalSchema: "lovedmemory",
                         principalTable: "aspnetroles",
                         principalColumn: "id",
@@ -144,16 +144,16 @@ namespace lovedmemory.infrastructure.Migrations
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    userid = table.Column<string>(type: "text", nullable: false),
-                    claimtype = table.Column<string>(type: "text", nullable: true),
-                    claimvalue = table.Column<string>(type: "text", nullable: true)
+                    user_id = table.Column<string>(type: "text", nullable: false),
+                    claim_type = table.Column<string>(type: "text", nullable: true),
+                    claim_value = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_aspnetuserclaims", x => x.id);
                     table.ForeignKey(
-                        name: "fk_aspnetuserclaims_aspnetusers_userid",
-                        column: x => x.userid,
+                        name: "fk_aspnetuserclaims_asp_net_users_user_id",
+                        column: x => x.user_id,
                         principalSchema: "lovedmemory",
                         principalTable: "aspnetusers",
                         principalColumn: "id",
@@ -165,17 +165,17 @@ namespace lovedmemory.infrastructure.Migrations
                 schema: "lovedmemory",
                 columns: table => new
                 {
-                    loginprovider = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
-                    providerkey = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
-                    providerdisplayname = table.Column<string>(type: "text", nullable: true),
-                    userid = table.Column<string>(type: "text", nullable: false)
+                    login_provider = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
+                    provider_key = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
+                    provider_display_name = table.Column<string>(type: "text", nullable: true),
+                    user_id = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_aspnetuserlogins", x => new { x.loginprovider, x.providerkey });
+                    table.PrimaryKey("pk_aspnetuserlogins", x => new { x.login_provider, x.provider_key });
                     table.ForeignKey(
-                        name: "fk_aspnetuserlogins_aspnetusers_userid",
-                        column: x => x.userid,
+                        name: "fk_aspnetuserlogins_asp_net_users_user_id",
+                        column: x => x.user_id,
                         principalSchema: "lovedmemory",
                         principalTable: "aspnetusers",
                         principalColumn: "id",
@@ -187,24 +187,24 @@ namespace lovedmemory.infrastructure.Migrations
                 schema: "lovedmemory",
                 columns: table => new
                 {
-                    userid = table.Column<string>(type: "text", nullable: false),
-                    roleid = table.Column<string>(type: "text", nullable: false)
+                    user_id = table.Column<string>(type: "text", nullable: false),
+                    role_id = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_aspnetuserroles", x => new { x.userid, x.roleid });
+                    table.PrimaryKey("pk_aspnetuserroles", x => new { x.user_id, x.role_id });
                     table.ForeignKey(
-                        name: "fk_aspnetuserroles_aspnetroles_roleid",
-                        column: x => x.roleid,
+                        name: "fk_aspnetuserroles_asp_net_users_user_id",
+                        column: x => x.user_id,
                         principalSchema: "lovedmemory",
-                        principalTable: "aspnetroles",
+                        principalTable: "aspnetusers",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "fk_aspnetuserroles_aspnetusers_userid",
-                        column: x => x.userid,
+                        name: "fk_aspnetuserroles_aspnetroles_role_id",
+                        column: x => x.role_id,
                         principalSchema: "lovedmemory",
-                        principalTable: "aspnetusers",
+                        principalTable: "aspnetroles",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -214,17 +214,17 @@ namespace lovedmemory.infrastructure.Migrations
                 schema: "lovedmemory",
                 columns: table => new
                 {
-                    userid = table.Column<string>(type: "text", nullable: false),
-                    loginprovider = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
+                    user_id = table.Column<string>(type: "text", nullable: false),
+                    login_provider = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
                     name = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
                     value = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_aspnetusertokens", x => new { x.userid, x.loginprovider, x.name });
+                    table.PrimaryKey("pk_aspnetusertokens", x => new { x.user_id, x.login_provider, x.name });
                     table.ForeignKey(
-                        name: "fk_aspnetusertokens_aspnetusers_userid",
-                        column: x => x.userid,
+                        name: "fk_aspnetusertokens_asp_net_users_user_id",
+                        column: x => x.user_id,
                         principalSchema: "lovedmemory",
                         principalTable: "aspnetusers",
                         principalColumn: "id",
@@ -232,69 +232,61 @@ namespace lovedmemory.infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "tributes",
+                name: "memorials",
                 schema: "lovedmemory",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    viewcount = table.Column<int>(type: "integer", nullable: false),
+                    view_count = table.Column<int>(type: "integer", nullable: false),
                     title = table.Column<string>(type: "text", nullable: false),
-                    personalphrase = table.Column<string>(type: "text", nullable: false),
-                    firstname = table.Column<string>(type: "text", nullable: false),
-                    lastname = table.Column<string>(type: "text", nullable: false),
-                    othernames = table.Column<string>(type: "text", nullable: false),
-                    about = table.Column<string>(type: "text", nullable: false),
+                    personal_phrase = table.Column<string>(type: "text", nullable: false),
+                    first_name = table.Column<string>(type: "text", nullable: false),
+                    last_name = table.Column<string>(type: "text", nullable: false),
+                    other_names = table.Column<string>(type: "text", nullable: true),
+                    biography = table.Column<string>(type: "text", nullable: true),
                     gender = table.Column<string>(type: "text", nullable: false),
                     slug = table.Column<string>(type: "text", nullable: false),
                     template = table.Column<string>(type: "text", nullable: false),
-                    mainimageurl = table.Column<string>(type: "text", nullable: false),
-                    edited = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    main_image_url = table.Column<string>(type: "text", nullable: true),
+                    edited = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     created = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    rundate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    run_date = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     published = table.Column<bool>(type: "boolean", nullable: false),
                     active = table.Column<bool>(type: "boolean", nullable: false),
-                    isprivate = table.Column<bool>(type: "boolean", nullable: false),
-                    coverphotoid = table.Column<int>(type: "integer", nullable: false),
-                    createdbyuserid = table.Column<string>(type: "text", nullable: false),
-                    lastmodified = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    lastmodifiedbyuserid = table.Column<string>(type: "text", nullable: true)
+                    is_private = table.Column<bool>(type: "boolean", nullable: false),
+                    created_by_user_id = table.Column<string>(type: "text", nullable: false),
+                    last_modified = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    last_modified_by_user_id = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_tributes", x => x.id);
+                    table.PrimaryKey("pk_memorials", x => x.id);
                     table.ForeignKey(
-                        name: "FK_tributes_aspnetusers_createdbyuserid",
-                        column: x => x.createdbyuserid,
+                        name: "fk_memorials_aspnetusers_created_by_user_id",
+                        column: x => x.created_by_user_id,
                         principalSchema: "lovedmemory",
                         principalTable: "aspnetusers",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "fk_tributes_coverphoto_coverphotoid",
-                        column: x => x.coverphotoid,
-                        principalSchema: "lovedmemory",
-                        principalTable: "coverphoto",
-                        principalColumn: "coverphotoid",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "rolepermissions",
+                name: "role_permissions",
                 schema: "lovedmemory",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    roleid = table.Column<string>(type: "text", nullable: false),
-                    permissionid = table.Column<int>(type: "integer", nullable: false)
+                    role_id = table.Column<string>(type: "text", nullable: false),
+                    permission_id = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_rolepermissions", x => x.id);
+                    table.PrimaryKey("pk_role_permissions", x => x.id);
                     table.ForeignKey(
-                        name: "fk_rolepermissions_permissions_permissionid",
-                        column: x => x.permissionid,
+                        name: "fk_role_permissions_permissions_permission_id",
+                        column: x => x.permission_id,
                         principalSchema: "lovedmemory",
                         principalTable: "permissions",
                         principalColumn: "id",
@@ -308,12 +300,12 @@ namespace lovedmemory.infrastructure.Migrations
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    tributeid = table.Column<int>(type: "integer", nullable: false),
+                    memorial_id = table.Column<int>(type: "integer", nullable: false),
                     title = table.Column<string>(type: "text", nullable: false),
                     description = table.Column<string>(type: "text", nullable: false),
                     tags = table.Column<string>(type: "text", nullable: false),
-                    userid = table.Column<string>(type: "text", nullable: false),
-                    addedbyid = table.Column<string>(type: "text", nullable: false),
+                    user_id = table.Column<string>(type: "text", nullable: false),
+                    added_by_id = table.Column<string>(type: "text", nullable: false),
                     added = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     url = table.Column<string>(type: "text", nullable: false)
                 },
@@ -321,17 +313,17 @@ namespace lovedmemory.infrastructure.Migrations
                 {
                     table.PrimaryKey("pk_audio", x => x.id);
                     table.ForeignKey(
-                        name: "fk_audio_aspnetusers_addedbyid",
-                        column: x => x.addedbyid,
+                        name: "fk_audio_memorials_memorial_id",
+                        column: x => x.memorial_id,
                         principalSchema: "lovedmemory",
-                        principalTable: "aspnetusers",
+                        principalTable: "memorials",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "fk_audio_tributes_tributeid",
-                        column: x => x.tributeid,
+                        name: "fk_audio_users_added_by_id",
+                        column: x => x.added_by_id,
                         principalSchema: "lovedmemory",
-                        principalTable: "tributes",
+                        principalTable: "aspnetusers",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -343,32 +335,83 @@ namespace lovedmemory.infrastructure.Migrations
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    tributeid = table.Column<int>(type: "integer", nullable: false),
-                    treelevel = table.Column<int>(type: "integer", nullable: false),
+                    memorial_id = table.Column<int>(type: "integer", nullable: false),
+                    tree_level = table.Column<int>(type: "integer", nullable: false),
                     details = table.Column<string>(type: "text", nullable: false),
                     visible = table.Column<bool>(type: "boolean", nullable: false),
                     edited = table.Column<bool>(type: "boolean", nullable: false),
-                    parentcommentid = table.Column<int>(type: "integer", nullable: true),
-                    commentid = table.Column<int>(type: "integer", nullable: true),
+                    parent_comment_id = table.Column<int>(type: "integer", nullable: true),
+                    comment_id = table.Column<int>(type: "integer", nullable: true),
                     created = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    createdbyuserid = table.Column<string>(type: "text", nullable: false),
-                    lastmodified = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    lastmodifiedbyuserid = table.Column<string>(type: "text", nullable: true)
+                    created_by_user_id = table.Column<string>(type: "text", nullable: false),
+                    last_modified = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    last_modified_by_user_id = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_comments", x => x.id);
                     table.ForeignKey(
-                        name: "fk_comments_comments_commentid",
-                        column: x => x.commentid,
+                        name: "fk_comments_comments_comment_id",
+                        column: x => x.comment_id,
                         principalSchema: "lovedmemory",
                         principalTable: "comments",
                         principalColumn: "id");
                     table.ForeignKey(
-                        name: "fk_comments_tributes_tributeid",
-                        column: x => x.tributeid,
+                        name: "fk_comments_memorials_memorial_id",
+                        column: x => x.memorial_id,
                         principalSchema: "lovedmemory",
-                        principalTable: "tributes",
+                        principalTable: "memorials",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "cover_photo",
+                schema: "lovedmemory",
+                columns: table => new
+                {
+                    cover_photo_id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    memorial_id = table.Column<int>(type: "integer", nullable: true),
+                    image_url = table.Column<string>(type: "text", nullable: false),
+                    title = table.Column<string>(type: "text", nullable: false),
+                    height = table.Column<int>(type: "integer", nullable: false),
+                    width = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_cover_photo", x => x.cover_photo_id);
+                    table.ForeignKey(
+                        name: "fk_cover_photo_memorials_memorial_id",
+                        column: x => x.memorial_id,
+                        principalSchema: "lovedmemory",
+                        principalTable: "memorials",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "extra_details",
+                schema: "lovedmemory",
+                columns: table => new
+                {
+                    memorial_id = table.Column<int>(type: "integer", nullable: false),
+                    nick_name = table.Column<string>(type: "text", nullable: true),
+                    relationship = table.Column<int>(type: "integer", nullable: true),
+                    date_of_birth = table.Column<DateOnly>(type: "date", nullable: true),
+                    date_of_death = table.Column<DateOnly>(type: "date", nullable: true),
+                    birth_country = table.Column<string>(type: "text", nullable: true),
+                    death_country = table.Column<string>(type: "text", nullable: true),
+                    life_story = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_extra_details", x => x.memorial_id);
+                    table.ForeignKey(
+                        name: "fk_extra_details_memorials_memorial_id",
+                        column: x => x.memorial_id,
+                        principalSchema: "lovedmemory",
+                        principalTable: "memorials",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -378,174 +421,149 @@ namespace lovedmemory.infrastructure.Migrations
                 schema: "lovedmemory",
                 columns: table => new
                 {
-                    tributeid = table.Column<int>(type: "integer", nullable: false),
-                    mediaurl = table.Column<string>(type: "text", nullable: false),
-                    mediatype = table.Column<int>(type: "integer", nullable: false),
+                    memorial_id = table.Column<int>(type: "integer", nullable: false),
+                    media_url = table.Column<string>(type: "text", nullable: false),
+                    media_type = table.Column<int>(type: "integer", nullable: false),
                     active = table.Column<bool>(type: "boolean", nullable: false),
                     approved = table.Column<bool>(type: "boolean", nullable: false),
                     added = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    mediatitle = table.Column<string>(type: "text", nullable: false),
+                    media_title = table.Column<string>(type: "text", nullable: false),
                     description = table.Column<string>(type: "text", nullable: false),
                     tags = table.Column<string>(type: "text", nullable: false),
-                    userid = table.Column<string>(type: "text", nullable: false),
-                    addedbyid = table.Column<string>(type: "text", nullable: true)
+                    user_id = table.Column<string>(type: "text", nullable: false),
+                    added_by_id = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_gallery", x => x.tributeid);
+                    table.PrimaryKey("pk_gallery", x => x.memorial_id);
                     table.ForeignKey(
-                        name: "fk_gallary_aspnetusers_addedbyid",
-                        column: x => x.addedbyid,
+                        name: "fk_gallary_memorials_memorial_id",
+                        column: x => x.memorial_id,
+                        principalSchema: "lovedmemory",
+                        principalTable: "memorials",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_gallary_users_added_by_id",
+                        column: x => x.added_by_id,
                         principalSchema: "lovedmemory",
                         principalTable: "aspnetusers",
                         principalColumn: "id");
-                    table.ForeignKey(
-                        name: "fk_gallary_tributes_tributeid",
-                        column: x => x.tributeid,
-                        principalSchema: "lovedmemory",
-                        principalTable: "tributes",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "lifestory",
-                schema: "tributes",
+                name: "life_story",
+                schema: "lovedmemory",
                 columns: table => new
                 {
-                    tributeid = table.Column<int>(type: "integer", nullable: false),
-                    storysection = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    memorial_id = table.Column<int>(type: "integer", nullable: false),
+                    story_section = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     story = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_lifestory", x => x.tributeid);
+                    table.PrimaryKey("pk_life_story", x => x.memorial_id);
                     table.ForeignKey(
-                        name: "fk_lifestory_tributes_tributeid",
-                        column: x => x.tributeid,
+                        name: "fk_life_story_memorials_memorial_id",
+                        column: x => x.memorial_id,
                         principalSchema: "lovedmemory",
-                        principalTable: "tributes",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "tributedetails",
-                schema: "lovedmemory",
-                columns: table => new
-                {
-                    tributeid = table.Column<int>(type: "integer", nullable: false),
-                    nickname = table.Column<string>(type: "text", nullable: false),
-                    relationship = table.Column<int>(type: "integer", nullable: false),
-                    dateofbirth = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    dateofdeath = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    birthcountry = table.Column<string>(type: "text", nullable: true),
-                    deathcountry = table.Column<string>(type: "text", nullable: false),
-                    lifestory = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_tributedetails", x => x.tributeid);
-                    table.ForeignKey(
-                        name: "fk_tributedetails_tributes_tributeid",
-                        column: x => x.tributeid,
-                        principalSchema: "lovedmemory",
-                        principalTable: "tributes",
+                        principalTable: "memorials",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_aspnetroleclaims_roleid",
+                name: "ix_aspnetroleclaims_role_id",
                 schema: "lovedmemory",
                 table: "aspnetroleclaims",
-                column: "roleid");
+                column: "role_id");
 
             migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",
                 schema: "lovedmemory",
                 table: "aspnetroles",
-                column: "normalizedname",
+                column: "normalized_name",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_aspnetuserclaims_userid",
+                name: "ix_aspnetuserclaims_user_id",
                 schema: "lovedmemory",
                 table: "aspnetuserclaims",
-                column: "userid");
+                column: "user_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_aspnetuserlogins_userid",
+                name: "ix_aspnetuserlogins_user_id",
                 schema: "lovedmemory",
                 table: "aspnetuserlogins",
-                column: "userid");
+                column: "user_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_aspnetuserroles_roleid",
+                name: "ix_aspnetuserroles_role_id",
                 schema: "lovedmemory",
                 table: "aspnetuserroles",
-                column: "roleid");
+                column: "role_id");
 
             migrationBuilder.CreateIndex(
                 name: "EmailIndex",
                 schema: "lovedmemory",
                 table: "aspnetusers",
-                column: "normalizedemail");
+                column: "normalized_email");
 
             migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
                 schema: "lovedmemory",
                 table: "aspnetusers",
-                column: "normalizedusername",
+                column: "normalized_user_name",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_audio_addedbyid",
+                name: "ix_audio_added_by_id",
                 schema: "lovedmemory",
                 table: "audio",
-                column: "addedbyid");
+                column: "added_by_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_audio_tributeid",
+                name: "ix_audio_memorial_id",
                 schema: "lovedmemory",
                 table: "audio",
-                column: "tributeid");
+                column: "memorial_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_comments_commentid",
+                name: "ix_comments_comment_id",
                 schema: "lovedmemory",
                 table: "comments",
-                column: "commentid");
+                column: "comment_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_comments_tributeid",
+                name: "ix_comments_memorial_id",
                 schema: "lovedmemory",
                 table: "comments",
-                column: "tributeid");
+                column: "memorial_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_gallery_addedbyid",
+                name: "ix_cover_photo_memorial_id",
+                schema: "lovedmemory",
+                table: "cover_photo",
+                column: "memorial_id",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "ix_gallery_added_by_id",
                 schema: "lovedmemory",
                 table: "gallery",
-                column: "addedbyid");
+                column: "added_by_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_rolepermissions_permissionid",
+                name: "ix_memorials_created_by_user_id",
                 schema: "lovedmemory",
-                table: "rolepermissions",
-                column: "permissionid");
+                table: "memorials",
+                column: "created_by_user_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_tributes_coverphotoid",
+                name: "ix_role_permissions_permission_id",
                 schema: "lovedmemory",
-                table: "tributes",
-                column: "coverphotoid");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_tributes_createdbyuserid",
-                schema: "lovedmemory",
-                table: "tributes",
-                column: "createdbyuserid");
+                table: "role_permissions",
+                column: "permission_id");
         }
 
         /// <inheritdoc />
@@ -580,7 +598,19 @@ namespace lovedmemory.infrastructure.Migrations
                 schema: "lovedmemory");
 
             migrationBuilder.DropTable(
-                name: "eventdetails",
+                name: "contact_messages",
+                schema: "lovedmemory");
+
+            migrationBuilder.DropTable(
+                name: "cover_photo",
+                schema: "lovedmemory");
+
+            migrationBuilder.DropTable(
+                name: "event_details",
+                schema: "lovedmemory");
+
+            migrationBuilder.DropTable(
+                name: "extra_details",
                 schema: "lovedmemory");
 
             migrationBuilder.DropTable(
@@ -588,15 +618,11 @@ namespace lovedmemory.infrastructure.Migrations
                 schema: "lovedmemory");
 
             migrationBuilder.DropTable(
-                name: "lifestory",
-                schema: "tributes");
-
-            migrationBuilder.DropTable(
-                name: "rolepermissions",
+                name: "life_story",
                 schema: "lovedmemory");
 
             migrationBuilder.DropTable(
-                name: "tributedetails",
+                name: "role_permissions",
                 schema: "lovedmemory");
 
             migrationBuilder.DropTable(
@@ -604,19 +630,15 @@ namespace lovedmemory.infrastructure.Migrations
                 schema: "lovedmemory");
 
             migrationBuilder.DropTable(
+                name: "memorials",
+                schema: "lovedmemory");
+
+            migrationBuilder.DropTable(
                 name: "permissions",
                 schema: "lovedmemory");
 
             migrationBuilder.DropTable(
-                name: "tributes",
-                schema: "lovedmemory");
-
-            migrationBuilder.DropTable(
                 name: "aspnetusers",
-                schema: "lovedmemory");
-
-            migrationBuilder.DropTable(
-                name: "coverphoto",
                 schema: "lovedmemory");
         }
     }

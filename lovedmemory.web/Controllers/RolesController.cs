@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace lovedmemory.web.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/roles")]
     [ApiController]
     public class RolesController : ControllerBase
     {
