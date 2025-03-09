@@ -5,7 +5,7 @@ namespace lovedmemory.domain.Common;
 
 public abstract class BaseAuditableEntity 
 {
-    public DateTimeOffset Created { get; set; }
+    public DateTimeOffset Created { get; set; } = DateTimeOffset.UtcNow;
     public string CreatedByUserId { get; set; }
     [NotMapped]
     public virtual AppUser CreatedByUser { get; set; }

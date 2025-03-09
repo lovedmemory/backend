@@ -1,6 +1,5 @@
 ﻿using lovedmemory.application.Contracts;
 using lovedmemory.application.DTOs;
-using lovedmemory.domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;

@@ -10,16 +10,21 @@ namespace lovedmemory.application.Services
     {
         private readonly IAppDbContext _context;
         private readonly ILogger<CommentService> _logger;
-        public CommentService(IAppDbContext context, ILogger<CommentService> logger)
+        private readonly IUserProvider _userProvider;
+
+        public CommentService(IAppDbContext context, ILogger<CommentService> logger, IUserProvider userProvider)
         {
             _context = context;
             _logger = logger;
+            _userProvider = userProvider;
         }
 
         public async Task<bool> PostComment(CommentDto Comment, CancellationToken cancellationToken)
         {
             try
             {
+                var createdByUserId = _userProvider.GetCurrentUser().Id;
+
                 if (_context.Comments == null)
                 {
                     return false;
@@ -29,7 +34,8 @@ namespace lovedmemory.application.Services
                     Details = Comment.Details,
                     ParentCommentId = Comment.ParentCommentId,
                     MemorialId = Comment.MemorialId,
-                    Visible = true
+                    Visible = true,
+                    CreatedByUserId = createdByUserId
 
                 };
                 _context.Comments.Add(_Comment);

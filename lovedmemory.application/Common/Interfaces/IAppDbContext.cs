@@ -10,7 +10,7 @@ namespace lovedmemory.application.Common.Interfaces
         DbSet<Comment> Comments { get; set; }
         DbSet<EventDetail> EventDetails { get; set; }
         DbSet<Contact> ContactMessages { get; set; }
-
+        
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);   
     }
 }

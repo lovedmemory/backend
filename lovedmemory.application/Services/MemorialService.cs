@@ -86,15 +86,7 @@ namespace lovedmemory.application.Services
                   MainImageUrl = t.MainImageUrl,
                   ViewCount = t.ViewCount,
                   AuthorName = t.CreatedByUser.FullName,
-                  AuthorEmail = t.CreatedByUser.Email,
-                  Comments = t.Comments.Select(c => new Comment
-                  {
-                      Id = c.Id,
-                      Details = c.Details,
-                      Created = c.Created,
-                      CreatedByUserId = c.CreatedByUserId,
-                      Replies = GetAllReplies(c.Replies).ToList()
-                  }).ToList()
+                  AuthorEmail = t.CreatedByUser.Email
               })
               .ToListAsync();
 
@@ -182,7 +174,7 @@ namespace lovedmemory.application.Services
                     Published = Memorial?.Published ?? false,
                     Title = "Memorial for" + Memorial.FirstName + " " + Memorial.LastName,
                     Slug = _slug,   
-                    Gender = Memorial.Gender,
+                    Gender = (char)Memorial.Gender,
                     Biography = Memorial.Biography,
                     IsPrivate = Memorial.Privacy,
                     Template = "default",

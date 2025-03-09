@@ -13,7 +13,7 @@ namespace lovedmemory.domain.Entities
         public string LastName { get; set; }
         public string? OtherNames { get; set; }
         public string? Biography { get; set; }
-        public string Gender { get; set; }
+        public char Gender { get; set; }
         public string Slug { get; set; }
         public string Template { get; set; }
         public string? MainImageUrl { get; set; }

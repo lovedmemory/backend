@@ -25,6 +25,5 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <Folder Include="Data\Interceptors\" />
-	  <Folder Include="Services\" />
 	</ItemGroup>
 </Project>

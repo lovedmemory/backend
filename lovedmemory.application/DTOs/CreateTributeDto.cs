@@ -11,7 +11,7 @@ namespace lovedmemory.application.DTOs
         public string? LastName { get; set; }
         public string? Dob { get; set; }
         public string? Dod { get; set; }
-        public string? Gender { get; set; }
+        public char? Gender { get; set; } = 'U';
         public string? MemorialName { get; set; }
         public bool Privacy { get; set; }
         public DateTimeOffset? RunDate { get; set; }

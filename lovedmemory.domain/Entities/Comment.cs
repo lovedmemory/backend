@@ -11,11 +11,13 @@ namespace lovedmemory.domain.Entities
         public bool Visible { get; set; } = true;
         public bool Edited { get; set; }
         public int? ParentCommentId { get; set; }
-        public virtual IList<Comment> Replies { get; set; } = [];
+        public virtual Memorial Memorial { get; set; }
+        public virtual Comment ParentComment { get; set; }
+        public virtual ICollection<Comment> Replies { get; set; } = new List<Comment>();
 
         public Comment()
         {
-            Replies = [];
-        }   
+            Replies = new List<Comment>();
+        }
     }
 }
