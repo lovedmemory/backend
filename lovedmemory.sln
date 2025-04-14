@@ -12,13 +12,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "lovedmemory.web", "lovedmemory.web\lovedmemory.web.csproj", "{DE704733-1F8D-474C-9F66-EC1458320F61}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{31F37799-84E2-4099-8587-42C41EE9DCCE}"
-	ProjectSection(SolutionItems) = preProject
-		.editorconfig = .editorconfig
-		Dockerfile = Dockerfile
-		database\Dockerfile = database\Dockerfile
-	EndProjectSection
-EndProject
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{8C2C0881-58D3-4C98-B331-21924CEE049E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -42,9 +35,6 @@ Global
 		{DE704733-1F8D-474C-9F66-EC1458320F61}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DE704733-1F8D-474C-9F66-EC1458320F61}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DE704733-1F8D-474C-9F66-EC1458320F61}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8C2C0881-58D3-4C98-B331-21924CEE049E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8C2C0881-58D3-4C98-B331-21924CEE049E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8C2C0881-58D3-4C98-B331-21924CEE049E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

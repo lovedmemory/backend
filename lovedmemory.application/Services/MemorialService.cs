@@ -22,7 +22,7 @@ namespace lovedmemory.application.Services
             _userProvider = userProvider;
         }
 
-        public async Task<MemorialDto?> GetMemorial(int id, string userId)
+        public async Task<MemorialDto?> GetMemorialByUserId(int id, string userId)
         {
             var Memorial = await _context.Memorials
               .Where(t => t.CreatedByUserId == userId && t.Id == id)
@@ -34,12 +34,17 @@ namespace lovedmemory.application.Services
               {
                   Id = t.Id,
                   Name = t.FullName(),
-                  Description = t.Biography,
                   Title = t.Title,
                   RunDate = t.RunDate,
                   Created = t.Created,
                   Active = t.Active,
-                  MainImageUrl = t.MainImageUrl,
+                  CommemorationDate = t.ExtraDetails.CommemorationDate,
+                  Slug = t.Slug,
+                  Dob = (DateOnly)t.ExtraDetails.DateOfBirth,
+                  Dod = (DateOnly)t.ExtraDetails.DateOfDeath,
+                  ImageUrl = t.MainImageUrl,
+                  PersonalPhrase = t.PersonalPhrase,
+                  Description = t.Description,
                   ViewCount = t.ViewCount,
                   AuthorName = t.CreatedByUser.FullName,
                   AuthorEmail = t.CreatedByUser.Email!,
@@ -54,20 +59,72 @@ namespace lovedmemory.application.Services
               }).FirstOrDefaultAsync();
             return Memorial;
         }
-        public async Task<Memorial?> GetMemorial(int id, CancellationToken token)
+        public async Task<MemorialDto?> GetMemorial(int id, CancellationToken token)
         {
-            var Memorial = await _context.Memorials
-            .Include(t => t.Comments)
-            .ThenInclude(c => c.Replies)
-            .SingleOrDefaultAsync(t => t.Id == id, token);
+            var memorial = await _context.Memorials
+                         .Where(t=> t.Id == id)
+                         .Include(t => t.CreatedByUser)
+                         .Include(t => t.Comments)
+                         .ThenInclude(c => c.Replies)
+                         .Select(t => new MemorialDto
+                         {
+                             Id = t.Id,
+                             Name = t.FullName(),
+                             Description = t.Description,
+                             Title = t.Title,
+                             RunDate = t.RunDate,
+                             Created = t.Created,
+                             Active = t.Active,
+                             Dob = (DateOnly)t.ExtraDetails.DateOfBirth,
+                             Dod = (DateOnly)t.ExtraDetails.DateOfDeath,
+                             ImageUrl = t.MainImageUrl,
+                             CommemorationDate = t.ExtraDetails.CommemorationDate,
+                             Slug = t.Slug,
+                             PersonalPhrase = t.PersonalPhrase,
+                             Biography = t.Biography,
+                             FirstName = t.FirstName,
+                             LastName = t.LastName,
+                             NickName = t.ExtraDetails.NickName,
+                             ViewCount = t.ViewCount,
+                             AuthorName = t.CreatedByUser.FullName,
+                             AuthorEmail = t.CreatedByUser.Email!,
+                             Published = t.Published,
+                             Comments = t.Comments.Select(c => new Comment
+                             {
+                                 Id = c.Id,
+                                 Details = c.Details,
+                                 Created = c.Created,
+                                 CreatedByUserId = c.CreatedByUserId,
+                                 Replies = GetAllReplies(c.Replies).ToList()
+                             }).ToList()
+                         }).FirstOrDefaultAsync();
 
-            if (Memorial != null)
+            if (memorial != null)
             {
-                ++Memorial.ViewCount;
+                ++memorial.ViewCount;
                 await _context.SaveChangesAsync(token);
             }
 
-            return Memorial;
+            return memorial;
+        }
+        public async Task<Result<Memorial>> GetEditMemorial(int id, CancellationToken token)
+        {
+            try
+            {
+                var memorial = await _context.Memorials
+                             .Where(t => t.Id == id)
+                             .Include(t => t.CreatedByUser)
+                             .Include(t => t.Comments)
+                             .ThenInclude(c => c.Replies)
+                             .FirstOrDefaultAsync(cancellationToken: token);
+
+                return Result<Memorial>.Success(memorial);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting Memorial For Edit form");
+                return Result<Memorial>.Failure("An error occured");
+            }
         }
 
         public async Task<IEnumerable<MemorialDto>?> GetMyMemorials(string userId)
@@ -81,12 +138,21 @@ namespace lovedmemory.application.Services
                   Id = t.Id,
                   Name = t.FullName(),
                   RunDate = t.RunDate,
+                  Description = t.Description,
+                  FirstName = t.FirstName,
+                  LastName = t.LastName,
                   Created = t.Created,
+                  Published = t.Published,  
+                  CommemorationDate = t.ExtraDetails.CommemorationDate,
+                  Slug = t.Slug,
                   Active = t.Active,
-                  MainImageUrl = t.MainImageUrl,
+                  ImageUrl = t.MainImageUrl,
                   ViewCount = t.ViewCount,
                   AuthorName = t.CreatedByUser.FullName,
-                  AuthorEmail = t.CreatedByUser.Email
+                  AuthorEmail = t.CreatedByUser.Email,
+                  Dob = (DateOnly)t.ExtraDetails.DateOfBirth,
+                  Dod = (DateOnly)t.ExtraDetails.DateOfDeath,
+                  PersonalPhrase = t.PersonalPhrase,
               })
               .ToListAsync();
 
@@ -103,13 +169,13 @@ namespace lovedmemory.application.Services
                     Details = reply.Details,
                     Created = reply.Created,
                     CreatedByUserId = reply.CreatedByUserId,
-                    Replies = GetAllReplies(reply.Replies).ToList()
+                    Replies = [.. GetAllReplies(reply.Replies)]
                 };
             }
         }
         public async Task<IEnumerable<MemorialDto>?> GetMemorials()
         {
-            IEnumerable<MemorialDto> Memorials = new List<MemorialDto>();
+            IEnumerable<MemorialDto> Memorials = [];
             try
             {
                 Memorials = await _context.Memorials
@@ -126,9 +192,10 @@ namespace lovedmemory.application.Services
                     Active = t.Active,
                     Title = t.Title,
                     Description = t.Biography,
-                    //NickName = t.NickName,
+                    Dob = (DateOnly)t.ExtraDetails.DateOfBirth,
+                    Dod = (DateOnly)t.ExtraDetails.DateOfDeath,
                     Slug = t.Slug,
-                    MainImageUrl = t.MainImageUrl,
+                    ImageUrl = t.MainImageUrl,
                     ViewCount = t.ViewCount,
                     AuthorName = t.CreatedByUser.FullName,
                     AuthorEmail = t.CreatedByUser.Email,
@@ -172,12 +239,14 @@ namespace lovedmemory.application.Services
                     LastName = Memorial.LastName,
                     PersonalPhrase = Memorial.PersonalPhrase,
                     Published = Memorial?.Published ?? false,
-                    Title = "Memorial for" + Memorial.FirstName + " " + Memorial.LastName,
+                    Title = "Memorial for " + Memorial.FirstName + " " + Memorial.LastName,
                     Slug = _slug,   
                     Gender = (char)Memorial.Gender,
                     Biography = Memorial.Biography,
+                    Description = Memorial.Description,
                     IsPrivate = Memorial.Privacy,
                     Template = "default",
+                    MainImageUrl = Memorial.ImageUrl,
                     ViewCount=0,
                     CreatedByUserId = createdByUserId
                 };
@@ -276,9 +345,5 @@ namespace lovedmemory.application.Services
             return true;
         }
 
-        public Task<Memorial?> GetMemorial(int id)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

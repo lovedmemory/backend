@@ -51,6 +51,7 @@ public class JwtTokenGenerator : IJwtTokenGenerator
             new(JwtRegisteredClaimNames.Iss, "school_app"),
             new(ClaimTypes.NameIdentifier, user.Id),
             new(ClaimTypes.Email, user.Email),
+            
             // Add permissions as claims
             new("permissions", JsonSerializer.Serialize(permissions))
         

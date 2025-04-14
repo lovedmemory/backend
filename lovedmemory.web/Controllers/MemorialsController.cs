@@ -10,8 +10,10 @@ using lovedmemory.application.Services;
 namespace lovedmemory.web.Controllers
 {
     //[Authorize(Permissions = "CanViewMemorials", Roles = "Manager, Admin")]
-   // [Authorize(Roles = "Manager, Admin")]
+    // [Authorize(Roles = "Manager, Admin")]
+#if DEBUG == false
     [Authorize]
+#endif
     [Route("api/memorials")]
     [ApiController]
     public class MemorialsController : ControllerBase
@@ -23,7 +25,7 @@ namespace lovedmemory.web.Controllers
             _memorialservice  = memorialservice;
         }
         // GET: api/<MemorialsController>
-        [AllowAnonymous]
+     
         [HttpGet]
         public async Task<IEnumerable<MemorialDto>> Get()
         {
@@ -37,9 +39,21 @@ namespace lovedmemory.web.Controllers
         }
         // GET api/<MemorialsController>/5
         [HttpGet("{id}")]
-        public async Task<Memorial> Get(int id)
+        public async Task<MemorialDto> Get(int id)
         {
-            return await _memorialservice.GetMemorial(id);
+            return await _memorialservice.GetMemorial(id, cancellationToken);
+        }
+
+        // GET api/<MemorialsController>/GetEdit/5
+        [HttpGet("GetEdit/{id}")]
+        public async Task<IActionResult> GetEdit(int id)
+        {
+            var res = await _memorialservice.GetEditMemorial(id, cancellationToken);
+            if (res.IsSuccess)
+            {
+                return Ok(res.Value);
+            }
+            return StatusCode(500, new { message = res.Error });
         }
 
         // POST api/<MemorialsController>
@@ -79,8 +93,17 @@ namespace lovedmemory.web.Controllers
 
         // DELETE api/<MemorialsController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
+            var res = await _memorialservice.DeleteMemorial(id, cancellationToken);
+            if (res)
+            {
+                return Ok();
+            }
+            else
+            {
+                return StatusCode(500, new { message = "An error occured" });
+            }
         }
     }
 }

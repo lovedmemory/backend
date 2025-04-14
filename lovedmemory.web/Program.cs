@@ -6,10 +6,8 @@ using lovedmemory.Infrastructure.Security.CurrentUserProvider;
 using lovedmemory.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 
-
-
 var builder = WebApplication.CreateBuilder(args);
-
+Console.WriteLine($"Application started on : { builder.WebHost.GetSetting("urls")}");
 Log.Logger = new LoggerConfiguration()
     //.Enrich.With
     .Enrich.FromLogContext() //logging from DiagnosticContext
@@ -25,11 +23,12 @@ builder.Configuration.AddJsonFile("appsettings.json", false, true);
 builder.Configuration.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true);
 builder.Configuration.AddEnvironmentVariables();
 builder.Logging.AddSerilog();
-builder.WebHost.ConfigureKestrel(opts =>
+builder.Services.AddHealthChecks();
+if (builder.Environment.IsProduction())
 {
-    opts.ListenAnyIP(5000); 
-
-});
+    builder.Services.AddHealthChecks();
+    //builder.WebHost.UseUrls("http://0.0.0.0:5000");
+}
 
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplicationServices();
@@ -74,6 +73,7 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 app.UseCors(options => options
+       .WithOrigins("http://localhost:3000")
        .AllowAnyHeader()
        .AllowAnyMethod()
        .SetIsOriginAllowed(hostName => true)

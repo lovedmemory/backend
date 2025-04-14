@@ -11,6 +11,7 @@ namespace lovedmemory.domain.Entities
         public Relationship? Relationship { get; set; }
         public DateOnly? DateOfBirth{ get; set; }
         public DateOnly? DateOfDeath { get; set; }
+        public DateOnly? CommemorationDate { get; set; }
         public string? BirthCountry { get; set; }
         public string? DeathCountry { get; set; }
         public string? LifeStory { get; set; }

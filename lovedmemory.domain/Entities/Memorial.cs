@@ -11,6 +11,7 @@ namespace lovedmemory.domain.Entities
         public string PersonalPhrase { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public string Description { get; set; }
         public string? OtherNames { get; set; }
         public string? Biography { get; set; }
         public char Gender { get; set; }

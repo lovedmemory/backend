@@ -8,7 +8,9 @@ using System.Net;
 
 namespace lovedmemory.web.Controllers
 {
+#if DEBUG == false
     [Authorize]
+#endif
     [Route("api/comments")]
     [ApiController]
     public class CommentsController : ControllerBase

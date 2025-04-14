@@ -1,4 +1,5 @@
 ﻿using lovedmemory.domain.Common;
+using System.Text.Json.Serialization;
 
 namespace lovedmemory.domain.Entities
 {
@@ -11,7 +12,9 @@ namespace lovedmemory.domain.Entities
         public bool Visible { get; set; } = true;
         public bool Edited { get; set; }
         public int? ParentCommentId { get; set; }
+        [JsonIgnore]
         public virtual Memorial Memorial { get; set; }
+        [JsonIgnore]
         public virtual Comment ParentComment { get; set; }
         public virtual ICollection<Comment> Replies { get; set; } = new List<Comment>();
 
