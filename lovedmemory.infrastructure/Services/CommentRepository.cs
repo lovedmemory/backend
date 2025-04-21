@@ -16,7 +16,7 @@ namespace lovedmemory.infrastructure.Services
         public IQueryable<Comment> GetTopLevelComments(int memorialId)
         {
             return _dbContext.Comments
-                .Where(c => c.MemorialId == memorialId && c.ParentCommentId == null && c.Visible)
+                .Where(c => c.MemorialId == memorialId && c.ParentCommentId == null && c.Status==CommentStatus.Approved)
                 .OrderByDescending(c => c.Created)
                 .AsQueryable();
         }
@@ -25,7 +25,7 @@ namespace lovedmemory.infrastructure.Services
         public IQueryable<Comment> GetCommentWithReplies(int commentId)
         {
             return _dbContext.Comments
-                .Include(c => c.Replies.Where(r => r.Visible).OrderByDescending(r => r.Created));
+                .Include(c => c.Replies.Where(r => r.Status == CommentStatus.Approved).OrderByDescending(r => r.Created));
                 //.FirstOrDefaultAsync(c => c.Id == commentId && c.Visible);
         }
 
@@ -35,13 +35,13 @@ namespace lovedmemory.infrastructure.Services
             // Using a more reliable approach with multiple includes
             return  _dbContext.Comments
                 .Include(c => c.Replies
-                    .Where(r => r.Visible))
+                    .Where(r => r.Status == CommentStatus.Approved))
                     .ThenInclude(r => r.Replies
-                        .Where(r2 => r2.Visible))
+                        .Where(r2 => r2.Status == CommentStatus.Approved))
                         .ThenInclude(r2 => r2.Replies
-                            .Where(r3 => r3.Visible))
+                            .Where(r3 => r3.Status == CommentStatus.Approved))
                             .ThenInclude(r3 => r3.Replies
-                                .Where(r4 => r4.Visible));
+                                .Where(r4 => r4.Status == CommentStatus.Approved));
                 //.FirstOrDefaultAsync(c => c.Id == commentId && c.Visible);
         }
 
@@ -68,15 +68,15 @@ namespace lovedmemory.infrastructure.Services
         {
             // Get only top-level comments with nested replies up to a reasonable depth
             return await _dbContext.Comments
-                .Where(c => c.MemorialId == memorialId && c.ParentCommentId == null && c.Visible)
+                .Where(c => c.MemorialId == memorialId && c.ParentCommentId == null && c.Status==CommentStatus.Approved)
                 .Include(c => c.Replies
-                    .Where(r => r.Visible))
+                    .Where(r => r.Status == CommentStatus.Approved))
                     .ThenInclude(r => r.Replies
-                        .Where(r2 => r2.Visible))
+                        .Where(r2 => r2.Status == CommentStatus.Approved))
                         .ThenInclude(r2 => r2.Replies
-                            .Where(r3 => r3.Visible))
+                            .Where(r3 => r3.Status == CommentStatus.Approved))
                             .ThenInclude(r3 => r3.Replies
-                                .Where(r4 => r4.Visible))
+                                .Where(r4 => r4.Status == CommentStatus.Approved))
                 .OrderByDescending(c => c.Created)
                 .ToListAsync();
         }
@@ -85,7 +85,7 @@ namespace lovedmemory.infrastructure.Services
         public async Task<Comment> GetCommentThreadWithExplicitLoadingAsync(int commentId)
         {
             var comment = await _dbContext.Comments
-                .FirstOrDefaultAsync(c => c.Id == commentId && c.Visible);
+                .FirstOrDefaultAsync(c => c.Id == commentId && c.Status == CommentStatus.Approved);
 
             if (comment != null)
             {
@@ -104,7 +104,7 @@ namespace lovedmemory.infrastructure.Services
             await _dbContext.Entry(comment)
                 .Collection(c => c.Replies)
                 .Query()
-                .Where(r => r.Visible)
+                .Where(r => r.Status == CommentStatus.Approved)
                 .OrderByDescending(r => r.Created)
                 .LoadAsync();
 

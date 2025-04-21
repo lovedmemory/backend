@@ -22,7 +22,6 @@ Log.Logger = new LoggerConfiguration()
 builder.Configuration.AddJsonFile("appsettings.json", false, true);
 builder.Configuration.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true);
 builder.Configuration.AddEnvironmentVariables();
-builder.Logging.AddSerilog();
 builder.Services.AddHealthChecks();
 if (builder.Environment.IsProduction())
 {
@@ -69,8 +68,10 @@ builder.Services.AddSwaggerGen(opt =>
 //        .RequireAuthenticatedUser()
 //        .Build();
 //});
-var app = builder.Build();
+builder.Logging.AddSerilog();
 
+var app = builder.Build();
+app.MapHealthChecks("/gesundheit");
 // Configure the HTTP request pipeline.
 app.UseCors(options => options
        .WithOrigins("http://localhost:3000")

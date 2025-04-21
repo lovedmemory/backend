@@ -8,9 +8,7 @@ using System.Net;
 
 namespace lovedmemory.web.Controllers
 {
-#if DEBUG == false
-    [Authorize]
-#endif
+
     [Route("api/comments")]
     [ApiController]
     public class CommentsController : ControllerBase
@@ -24,8 +22,8 @@ namespace lovedmemory.web.Controllers
         }
 
         // POST api/<CommentsController>
-        [HttpPost]
-        public async Task<IActionResult> Post([FromBody] CommentDto comment)
+        [HttpPost] 
+        public async Task<IActionResult> Post(CommentDto comment)
         {
             bool success = await _commentService.PostComment(comment, cancellationToken);
             return success ? Ok(comment) : new StatusCodeResult(500);

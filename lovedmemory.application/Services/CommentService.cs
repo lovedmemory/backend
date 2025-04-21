@@ -23,8 +23,15 @@ namespace lovedmemory.application.Services
         {
             try
             {
-                var createdByUserId = _userProvider.GetCurrentUser().Id;
-
+                var createdByUserId = "";
+                try
+                {
+                    createdByUserId = _userProvider.GetCurrentUser().Id;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "error saving comment");
+                }
                 if (_context.Comments == null)
                 {
                     return false;
@@ -34,9 +41,9 @@ namespace lovedmemory.application.Services
                     Details = Comment.Details,
                     ParentCommentId = Comment.ParentCommentId,
                     MemorialId = Comment.MemorialId,
-                    Visible = true,
-                    CreatedByUserId = createdByUserId
-
+                    Status = 0,
+                    Name = Comment.Name,
+                    CreatedByUserId = Comment?.CreatedByUserId
                 };
                 _context.Comments.Add(_Comment);
                 var res = await _context.SaveChangesAsync(cancellationToken);
@@ -70,7 +77,7 @@ namespace lovedmemory.application.Services
                     Details = Comment.Details,
                     ParentCommentId = Comment.ParentCommentId,
                     MemorialId = Comment.Id,
-                    Visible = existingComment.Visible
+                    Status = existingComment.Status
 
                 };
                 _context.Comments.Entry(existingComment).CurrentValues.SetValues(Comment);

@@ -53,6 +53,7 @@ namespace lovedmemory.application.Services
                       Id = c.Id,
                       Details = c.Details,
                       Created = c.Created,
+                      Name = c.Name,
                       CreatedByUserId = c.CreatedByUserId,
                       Replies = GetAllReplies(c.Replies).ToList()
                   }).ToList()
@@ -94,6 +95,7 @@ namespace lovedmemory.application.Services
                                  Id = c.Id,
                                  Details = c.Details,
                                  Created = c.Created,
+                                 Name = c.Name,
                                  CreatedByUserId = c.CreatedByUserId,
                                  Replies = GetAllReplies(c.Replies).ToList()
                              }).ToList()
@@ -155,8 +157,6 @@ namespace lovedmemory.application.Services
                   PersonalPhrase = t.PersonalPhrase,
               })
               .ToListAsync();
-
-
         }
         // Helper function to retrieve all replies recursively
         private static IEnumerable<Comment> GetAllReplies(IEnumerable<Comment> replies)
@@ -204,6 +204,7 @@ namespace lovedmemory.application.Services
                         Id = c.Id,
                         Details = c.Details,
                         Created = c.Created,
+                        Name = c.Name,
                         CreatedByUserId = c.CreatedByUserId,
                         Replies = GetAllReplies(c.Replies).ToList()
                     }).ToList()

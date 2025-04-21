@@ -8,8 +8,9 @@ namespace lovedmemory.domain.Entities
         public int Id { get; set; }
         public int MemorialId { get; set; }
         public int TreeLevel { get; set; }
+        public string Name { get; set; }
         public string Details { get; set; }
-        public bool Visible { get; set; } = true;
+        public CommentStatus Status { get; set; } = 0;
         public bool Edited { get; set; }
         public int? ParentCommentId { get; set; }
         [JsonIgnore]
@@ -22,5 +23,18 @@ namespace lovedmemory.domain.Entities
         {
             Replies = new List<Comment>();
         }
+    }
+
+    public enum CommentType
+    {
+        Comment = 0,
+        Reply = 1
+    }
+    public enum CommentStatus
+    {
+        Pending = 0,
+        Approved = 1,
+        Rejected = 2,
+        Deleted = 3
     }
 }
