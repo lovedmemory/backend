@@ -1,39 +1,6 @@
-version: '3.4'
-
 services:
-
   lovedmemory.web:
     image: ${DOCKER_REGISTRY-}lovedmemoryweb
     build:
       context: .
       dockerfile: lovedmemory.web/Dockerfile
-    container_name: lovedmemory_api
-    depends_on:
-      - lovedmemory.db
-    networks:
-      - app-network
-    environment:
-    - DB_CONNECTION_STRING=Database=lovedmemorydb;User Id=postgres;Password=Muthuri24;
-
-  lovedmemory.db:
-    build:
-      context: .
-      dockerfile: database/Dockerfile
-    container_name: lovedmemory_db
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: Muthuri24
-      POSTGRES_DB: lovedmemorydb
-    ports:
-      - "5432:5432"
-    volumes:
-      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - ./pgdata-data:/var/lib/postgresql/data
-    networks:
-      - app-network
-
-# volumes:
-#   pgdata:
-
-networks:
-  app-network:

@@ -463,6 +463,10 @@ namespace lovedmemory.infrastructure.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("tree_level");
 
+                    b.Property<int?>("TributeId")
+                        .HasColumnType("integer")
+                        .HasColumnName("tribute_id");
+
                     b.HasKey("Id")
                         .HasName("pk_comments");
 
@@ -471,6 +475,9 @@ namespace lovedmemory.infrastructure.Migrations
 
                     b.HasIndex("ParentCommentId")
                         .HasDatabaseName("ix_comments_parent_comment_id");
+
+                    b.HasIndex("TributeId")
+                        .HasDatabaseName("ix_comments_tribute_id");
 
                     b.ToTable("comments", "lovedmemory");
                 });
@@ -835,6 +842,84 @@ namespace lovedmemory.infrastructure.Migrations
                     b.ToTable("memorials", "lovedmemory");
                 });
 
+            modelBuilder.Entity("lovedmemory.domain.Entities.Tribute", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("boolean")
+                        .HasColumnName("active");
+
+                    b.Property<DateTimeOffset>("Created")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created");
+
+                    b.Property<string>("CreatedByUserId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("created_by_user_id");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("description");
+
+                    b.Property<DateTimeOffset>("Edited")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("edited");
+
+                    b.Property<DateTimeOffset?>("LastModified")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_modified");
+
+                    b.Property<string>("LastModifiedByUserId")
+                        .HasColumnType("text")
+                        .HasColumnName("last_modified_by_user_id");
+
+                    b.Property<string>("MainImageUrl")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("main_image_url");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("name");
+
+                    b.Property<string>("NickName")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("nick_name");
+
+                    b.Property<DateTimeOffset>("RunDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("run_date");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("slug");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("title");
+
+                    b.Property<int>("ViewCount")
+                        .HasColumnType("integer")
+                        .HasColumnName("view_count");
+
+                    b.HasKey("Id")
+                        .HasName("pk_tributes");
+
+                    b.ToTable("tributes", "lovedmemory");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -939,6 +1024,11 @@ namespace lovedmemory.infrastructure.Migrations
                         .HasForeignKey("ParentCommentId")
                         .HasConstraintName("fk_comments_comments_parent_comment_id");
 
+                    b.HasOne("lovedmemory.domain.Entities.Tribute", null)
+                        .WithMany("Comments")
+                        .HasForeignKey("TributeId")
+                        .HasConstraintName("fk_comments_tributes_tribute_id");
+
                     b.Navigation("Memorial");
 
                     b.Navigation("ParentComment");
@@ -1027,6 +1117,11 @@ namespace lovedmemory.infrastructure.Migrations
                     b.Navigation("Gallery");
 
                     b.Navigation("LifeStory");
+                });
+
+            modelBuilder.Entity("lovedmemory.domain.Entities.Tribute", b =>
+                {
+                    b.Navigation("Comments");
                 });
 #pragma warning restore 612, 618
         }

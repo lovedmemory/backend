@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace lovedmemory.infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class initdb : Migration
+    public partial class tributes : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -112,6 +112,33 @@ namespace lovedmemory.infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_permissions", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "tributes",
+                schema: "lovedmemory",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    view_count = table.Column<int>(type: "integer", nullable: false),
+                    title = table.Column<string>(type: "text", nullable: false),
+                    name = table.Column<string>(type: "text", nullable: false),
+                    description = table.Column<string>(type: "text", nullable: false),
+                    nick_name = table.Column<string>(type: "text", nullable: false),
+                    slug = table.Column<string>(type: "text", nullable: false),
+                    main_image_url = table.Column<string>(type: "text", nullable: false),
+                    edited = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    created = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    run_date = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    active = table.Column<bool>(type: "boolean", nullable: false),
+                    created_by_user_id = table.Column<string>(type: "text", nullable: false),
+                    last_modified = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    last_modified_by_user_id = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_tributes", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -243,9 +270,10 @@ namespace lovedmemory.infrastructure.Migrations
                     personal_phrase = table.Column<string>(type: "text", nullable: false),
                     first_name = table.Column<string>(type: "text", nullable: false),
                     last_name = table.Column<string>(type: "text", nullable: false),
+                    description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
                     other_names = table.Column<string>(type: "text", nullable: true),
                     biography = table.Column<string>(type: "text", nullable: true),
-                    gender = table.Column<string>(type: "text", nullable: false),
+                    gender = table.Column<char>(type: "character(1)", nullable: false),
                     slug = table.Column<string>(type: "text", nullable: false),
                     template = table.Column<string>(type: "text", nullable: false),
                     main_image_url = table.Column<string>(type: "text", nullable: true),
@@ -337,11 +365,12 @@ namespace lovedmemory.infrastructure.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     memorial_id = table.Column<int>(type: "integer", nullable: false),
                     tree_level = table.Column<int>(type: "integer", nullable: false),
+                    name = table.Column<string>(type: "text", nullable: false),
                     details = table.Column<string>(type: "text", nullable: false),
-                    visible = table.Column<bool>(type: "boolean", nullable: false),
+                    status = table.Column<int>(type: "integer", nullable: false),
                     edited = table.Column<bool>(type: "boolean", nullable: false),
                     parent_comment_id = table.Column<int>(type: "integer", nullable: true),
-                    comment_id = table.Column<int>(type: "integer", nullable: true),
+                    tribute_id = table.Column<int>(type: "integer", nullable: true),
                     created = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     created_by_user_id = table.Column<string>(type: "text", nullable: false),
                     last_modified = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
@@ -351,8 +380,8 @@ namespace lovedmemory.infrastructure.Migrations
                 {
                     table.PrimaryKey("pk_comments", x => x.id);
                     table.ForeignKey(
-                        name: "fk_comments_comments_comment_id",
-                        column: x => x.comment_id,
+                        name: "fk_comments_comments_parent_comment_id",
+                        column: x => x.parent_comment_id,
                         principalSchema: "lovedmemory",
                         principalTable: "comments",
                         principalColumn: "id");
@@ -363,6 +392,12 @@ namespace lovedmemory.infrastructure.Migrations
                         principalTable: "memorials",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_comments_tributes_tribute_id",
+                        column: x => x.tribute_id,
+                        principalSchema: "lovedmemory",
+                        principalTable: "tributes",
+                        principalColumn: "id");
                 });
 
             migrationBuilder.CreateTable(
@@ -400,6 +435,7 @@ namespace lovedmemory.infrastructure.Migrations
                     relationship = table.Column<int>(type: "integer", nullable: true),
                     date_of_birth = table.Column<DateOnly>(type: "date", nullable: true),
                     date_of_death = table.Column<DateOnly>(type: "date", nullable: true),
+                    commemoration_date = table.Column<DateOnly>(type: "date", nullable: true),
                     birth_country = table.Column<string>(type: "text", nullable: true),
                     death_country = table.Column<string>(type: "text", nullable: true),
                     life_story = table.Column<string>(type: "text", nullable: true)
@@ -529,16 +565,22 @@ namespace lovedmemory.infrastructure.Migrations
                 column: "memorial_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_comments_comment_id",
-                schema: "lovedmemory",
-                table: "comments",
-                column: "comment_id");
-
-            migrationBuilder.CreateIndex(
                 name: "ix_comments_memorial_id",
                 schema: "lovedmemory",
                 table: "comments",
                 column: "memorial_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_comments_parent_comment_id",
+                schema: "lovedmemory",
+                table: "comments",
+                column: "parent_comment_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_comments_tribute_id",
+                schema: "lovedmemory",
+                table: "comments",
+                column: "tribute_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_cover_photo_memorial_id",
@@ -627,6 +669,10 @@ namespace lovedmemory.infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "aspnetroles",
+                schema: "lovedmemory");
+
+            migrationBuilder.DropTable(
+                name: "tributes",
                 schema: "lovedmemory");
 
             migrationBuilder.DropTable(

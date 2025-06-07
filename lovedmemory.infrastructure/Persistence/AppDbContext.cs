@@ -16,7 +16,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
     public DbSet<Permission> Permissions { get; set; }
     public DbSet<RolePermission> RolePermissions { get;  set; }
     public DbSet<ExtraDetails> ExtraDetails { get; set; }
-
+    public DbSet<Tribute> Tributes { get; set; }
     protected override void OnModelCreating(ModelBuilder builder)
     {
 

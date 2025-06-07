@@ -15,6 +15,7 @@ using lovedmemory.Infrastructure.Persistence.Interceptors;
 using lovedmemory.application.Common.Interfaces;
 using lovedmemory.domain.Entities;
 using lovedmemory.application.Contracts;
+using IJwtTokenGenerator = lovedmemory.Infrastructure.Security.TokenGenerator.IJwtTokenGenerator;
 
 
 namespace lovedmemory.Infrastructure;

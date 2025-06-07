@@ -29,8 +29,6 @@ namespace lovedmemory.domain.Entities
         public virtual ExtraDetails ExtraDetails { get; set; } 
         public virtual IList<Gallery> Gallery { get; set; } = [];
         public virtual IList<Audio>? Audios { get; set; } = [];
-        public virtual LifeStory? LifeStory { get; set; }
-
-    
+        public virtual LifeStory? LifeStory { get; set; }    
     }
 }
