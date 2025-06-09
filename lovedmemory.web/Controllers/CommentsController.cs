@@ -21,7 +21,15 @@ namespace lovedmemory.web.Controllers
             _commentService = commentService;
         }
 
+        /// <summary>
+        /// Add comment to memorial
+        /// </summary>
+        /// <param name="comment"></param>
+        /// <returns></returns>
         // POST api/<CommentsController>
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost] 
         public async Task<IActionResult> Post(CommentDto comment)
         {
@@ -29,7 +37,16 @@ namespace lovedmemory.web.Controllers
             return success ? Ok(comment) : new StatusCodeResult(500);
         }
 
+        /// <summary>
+        /// Update Comment
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="comment"></param>
+        /// <returns></returns>
         // PUT api/<CommentsController>/5
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] CommentDto comment)
         {
@@ -37,13 +54,20 @@ namespace lovedmemory.web.Controllers
             return res!=null ? Ok(comment) : new StatusCodeResult(500);
         }
 
+        /// <summary>
+        /// Delete Comment
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         // DELETE api/<CommentsController>/5
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpDelete("{id}")]
         public async Task<HttpStatusCode> Delete(int id)
         {
             var deleted = await _commentService.DeleteComment(id, cancellationToken);
             return deleted?  HttpStatusCode.NoContent : HttpStatusCode.InternalServerError;
-
         }
     }
 }

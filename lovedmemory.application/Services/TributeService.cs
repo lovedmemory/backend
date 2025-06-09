@@ -109,31 +109,31 @@ namespace lovedmemory.application.Services
         public async Task<IEnumerable<TributeDto>?> GetTributes()
         {
             return await _context.Tributes
-         .Where(t => t.Active == true)
-         .Include(t => t.CreatedByUser)
-         .Include(t => t.Comments)
-         .ThenInclude(c => c.Replies)
-         .Select(t => new TributeDto
-         {
-             Id = t.Id,
-             Name = t.Name,
-             RunDate = t.RunDate,
-             Created = t.Created,
-             Active = t.Active,
-             MainImageUrl = t.MainImageUrl,
-             ViewCount = t.ViewCount,
-             AuthorName = t.CreatedByUser.FullName,
-             AuthorEmail = t.CreatedByUser.Email,
-             Comments = t.Comments.Select(c => new Comment
+             .Where(t => t.Active == true)
+             .Include(t => t.CreatedByUser)
+             .Include(t => t.Comments)
+             .ThenInclude(c => c.Replies)
+             .Select(t => new TributeDto
              {
-                 Id = c.Id,
-                 Details = c.Details,
-                 Created = c.Created,
-                 CreatedByUserId = c.CreatedByUserId,
-                 Replies = GetAllReplies(c.Replies).ToList()
-             }).ToList()
-         })
-         .ToListAsync();
+                 Id = t.Id,
+                 Name = t.Name,
+                 RunDate = t.RunDate,
+                 Created = t.Created,
+                 Active = t.Active,
+                 MainImageUrl = t.MainImageUrl,
+                 ViewCount = t.ViewCount,
+                 AuthorName = t.CreatedByUser.FullName,
+                 AuthorEmail = t.CreatedByUser.Email,
+                 Comments = t.Comments.Select(c => new Comment
+                 {
+                     Id = c.Id,
+                     Details = c.Details,
+                     Created = c.Created,
+                     CreatedByUserId = c.CreatedByUserId,
+                     Replies = GetAllReplies(c.Replies).ToList()
+                 }).ToList()
+             })
+             .ToListAsync();
         }
 
         public async Task<bool> PostTribute(CreateTributeDto tribute, CancellationToken cancellationToken)
