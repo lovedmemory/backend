@@ -48,7 +48,7 @@ public class AuthController : ControllerBase
         var response = await _authService.Register(request);
         if (response.IsSuccess)
         {
-            return Ok(response);
+            return Ok(response.Value);
         }
 
         return StatusCode(500, new { Message = response.Error }); // BadRequest( response.Error);

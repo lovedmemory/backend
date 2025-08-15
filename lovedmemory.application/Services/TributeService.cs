@@ -11,12 +11,10 @@ namespace lovedmemory.application.Services
     {
         private readonly IAppDbContext _context;
         private readonly ILogger<TributeService> _logger;
-        private readonly IDateTime _dateTime;
-        public TributeService(IAppDbContext context, ILogger<TributeService> logger, IDateTime dateTime)
+        public TributeService(IAppDbContext context, ILogger<TributeService> logger)
         {
             _context = context;
             _logger = logger;
-            _dateTime = dateTime;
         }
 
 
@@ -145,8 +143,8 @@ namespace lovedmemory.application.Services
             Tribute _tribute = new()
             {
                 Active = true,
-                Created = _dateTime.Now,
-                RunDate = _dateTime.Now,
+                Created = DateTimeOffset.UtcNow,
+                RunDate = DateTimeOffset.UtcNow,
                 Name = tribute.TributeName,
                 Title = tribute.Title,
                 Description = tribute.Description,

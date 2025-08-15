@@ -36,6 +36,7 @@
   <ItemGroup>
     <ProjectReference Include="..\lovedmemory.application\lovedmemory.application.csproj" />
     <ProjectReference Include="..\lovedmemory.infrastructure\lovedmemory.infrastructure.csproj" />
+    <ProjectReference Include="..\lovedmemory.ServiceDefaults\lovedmemory.ServiceDefaults.csproj" />
   </ItemGroup>
 
   <ItemGroup>

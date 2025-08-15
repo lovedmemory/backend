@@ -7,6 +7,8 @@ using lovedmemory.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.AddServiceDefaults();
 Console.WriteLine($"Application started on : { builder.WebHost.GetSetting("urls")}");
 Log.Logger = new LoggerConfiguration()
     //.Enrich.With
@@ -71,6 +73,8 @@ builder.Services.AddSwaggerGen(opt =>
 builder.Logging.AddSerilog();
 
 var app = builder.Build();
+
+app.MapDefaultEndpoints();
 app.MapHealthChecks("/gesundheit");
 // Configure the HTTP request pipeline.
 app.UseCors(options => options

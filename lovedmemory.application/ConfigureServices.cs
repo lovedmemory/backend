@@ -14,6 +14,7 @@ public static class ConfigureServices
         services.AddScoped<IUserProvider, UserProvider>();
 
         services.AddScoped<IMemorialService, MemorialService>();
+        services.AddScoped<ITributeService, TributeService>();
         services.AddScoped<ICommentService, CommentService>();
         services.AddScoped<IContactMessageService, ContactMessageservice>();
         return services;
