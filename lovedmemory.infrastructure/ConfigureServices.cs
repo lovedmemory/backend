@@ -11,6 +11,7 @@ using lovedmemory.Infrastructure.Security.RoleService;
 using lovedmemory.Infrastructure.Security.TokenGenerator;
 using lovedmemory.Infrastructure.Security.TokenValidation;
 using lovedmemory.Infrastructure.Data;
+using lovedmemory.Infrastructure.Persistence;
 using lovedmemory.Infrastructure.Persistence.Interceptors;
 using lovedmemory.application.Common.Interfaces;
 using lovedmemory.domain.Entities;
@@ -50,6 +51,7 @@ public static class DependencyInjection
             options.UseNpgsql(connectionString).UseSnakeCaseNamingConvention();
         });
         services.AddScoped<IAppDbContext, AppDbContext>();
+        services.AddScoped<AppDbContextInitialiser>();
 
         return services;
     }

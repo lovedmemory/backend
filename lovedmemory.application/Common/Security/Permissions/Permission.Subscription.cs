@@ -1,4 +1,4 @@
-namespace lovedmemory.infrastructure.Common.Security.Permissions;
+namespace lovedmemory.application.Common.Security.Permissions;
 
 public static partial class Permission
 {

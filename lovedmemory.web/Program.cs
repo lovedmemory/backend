@@ -4,7 +4,9 @@ using Serilog;
 using Serilog.Events;
 using lovedmemory.Infrastructure.Security.CurrentUserProvider;
 using lovedmemory.Infrastructure;
+using lovedmemory.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -73,6 +75,14 @@ builder.Services.AddSwaggerGen(opt =>
 builder.Logging.AddSerilog();
 
 var app = builder.Build();
+
+// Initialize and seed database
+using (var scope = app.Services.CreateScope())
+{
+    var initializer = scope.ServiceProvider.GetRequiredService<AppDbContextInitialiser>();
+    await initializer.InitialiseAsync();
+    await initializer.SeedAsync();
+}
 
 app.MapDefaultEndpoints();
 app.MapHealthChecks("/gesundheit");
