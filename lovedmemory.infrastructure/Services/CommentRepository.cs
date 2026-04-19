@@ -1,118 +1,146 @@
-﻿using lovedmemory.domain.Entities;
+﻿// lovedmemory.infrastructure.Persistence.Repositories.CommentRepository.cs
+using lovedmemory.domain.Entities;
 using lovedmemory.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 
-namespace lovedmemory.infrastructure.Services
+namespace lovedmemory.infrastructure.Persistence.Repositories;
+
+public interface ICommentRepository
 {
-    class CommentRepository
+    Task<IEnumerable<Comment>> GetThreadByMemorialAsync(int memorialId, CancellationToken ct = default);
+    Task<Comment?> GetWithRepliesAsync(int commentId, CancellationToken ct = default);
+    Task<Comment> AddAsync(Comment comment, CancellationToken ct = default);
+    Task UpdateAsync(Comment comment, CancellationToken ct = default);
+    Task SoftDeleteAsync(int commentId, CancellationToken ct = default);
+}
+
+public class CommentRepository : ICommentRepository
+{
+    private readonly AppDbContext _context;
+
+    public CommentRepository(AppDbContext context)
     {
-        private readonly AppDbContext _dbContext;
-        public CommentRepository(AppDbContext dbContext)
+        _context = context;
+    }
+
+    /// <summary>
+    /// Fetches only ROOT comments for a memorial, with up to N levels of replies
+    /// loaded eagerly. For deep trees, use recursive CTE instead (see below).
+    /// </summary>
+    public async Task<IEnumerable<Comment>> GetThreadByMemorialAsync(
+        int memorialId, CancellationToken ct = default)
+    {
+        return await _context.Comments
+            .Where(c => c.MemorialId == memorialId
+                     && c.ParentCommentId == null          // root comments only
+                     && c.Status == CommentStatus.Approved)
+            .Include(c => c.Replies.Where(r => r.Status == CommentStatus.Approved))
+                .ThenInclude(r => r.Replies.Where(r2 => r2.Status == CommentStatus.Approved))
+                    .ThenInclude(r2 => r2.Replies.Where(r3 => r3.Status == CommentStatus.Approved))
+            .OrderByDescending(c => c.Created)
+            .AsNoTracking()
+            .ToListAsync(ct);
+    }
+    public async Task<IEnumerable<Comment>> GetFullThreadViaCteAsync(
+    int memorialId, CancellationToken ct = default)
+    {
+        return await _context.Comments
+            .FromSqlRaw("""
+            WITH RECURSIVE CommentTree AS (
+                -- Anchor: root comments
+                SELECT * FROM "Comments"
+                WHERE "MemorialId" = {0}
+                  AND "ParentCommentId" IS NULL
+                  AND "Status" = 1  -- Approved
+
+                UNION ALL
+
+                -- Recursive: all replies
+                SELECT c.* FROM "Comments" c
+                INNER JOIN CommentTree ct ON c."ParentCommentId" = ct."Id"
+                WHERE c."Status" = 1
+            )
+            SELECT * FROM CommentTree
+            ORDER BY "TreeLevel", "CreatedAt"
+        """, memorialId)
+            .AsNoTracking()
+            .ToListAsync(ct);
+        // Then reconstruct the tree in-memory (see below)
+    }
+    public static IEnumerable<Comment> BuildTree(IEnumerable<Comment> flatList)
+    {
+        var lookup = flatList.ToDictionary(c => c.Id);
+        var roots = new List<Comment>();
+
+        foreach (var comment in flatList)
         {
-            _dbContext = dbContext;
-        }
-        // Get top-level comments for a memorial (no parent)
-        public IQueryable<Comment> GetTopLevelComments(int memorialId)
-        {
-            return _dbContext.Comments
-                .Where(c => c.MemorialId == memorialId && c.ParentCommentId == null && c.Status==CommentStatus.Approved)
-                .OrderByDescending(c => c.Created)
-                .AsQueryable();
-        }
-
-        // Get a comment with its immediate replies
-        public IQueryable<Comment> GetCommentWithReplies(int commentId)
-        {
-            return _dbContext.Comments
-                .Include(c => c.Replies.Where(r => r.Status == CommentStatus.Approved).OrderByDescending(r => r.Created));
-                //.FirstOrDefaultAsync(c => c.Id == commentId && c.Visible);
-        }
-
-        // Get an entire comment thread (a comment with all nested replies)
-        public IQueryable<Comment> GetCommentThread(int commentId)
-        {
-            // Using a more reliable approach with multiple includes
-            return  _dbContext.Comments
-                .Include(c => c.Replies
-                    .Where(r => r.Status == CommentStatus.Approved))
-                    .ThenInclude(r => r.Replies
-                        .Where(r2 => r2.Status == CommentStatus.Approved))
-                        .ThenInclude(r2 => r2.Replies
-                            .Where(r3 => r3.Status == CommentStatus.Approved))
-                            .ThenInclude(r3 => r3.Replies
-                                .Where(r4 => r4.Status == CommentStatus.Approved));
-                //.FirstOrDefaultAsync(c => c.Id == commentId && c.Visible);
-        }
-
-        // Add a reply to a comment
-        public async Task<Comment> AddReplyAsync(int parentCommentId, Comment reply)
-        {
-            var parentComment = await _dbContext.Comments.FindAsync(parentCommentId);
-            if (parentComment == null)
-                throw new ArgumentException("Parent comment not found");
-
-            // Set the parent ID and update the tree level
-            reply.ParentCommentId = parentCommentId;
-            reply.TreeLevel = parentComment.TreeLevel + 1;
-            reply.MemorialId = parentComment.MemorialId;
-
-            _dbContext.Comments.Add(reply);
-            await _dbContext.SaveChangesAsync();
-
-            return reply;
-        }
-
-        // Get all comments for a memorial with their hierarchy preserved
-        public async Task<List<Comment>> GetAllCommentsHierarchicallyAsync(int memorialId)
-        {
-            // Get only top-level comments with nested replies up to a reasonable depth
-            return await _dbContext.Comments
-                .Where(c => c.MemorialId == memorialId && c.ParentCommentId == null && c.Status==CommentStatus.Approved)
-                .Include(c => c.Replies
-                    .Where(r => r.Status == CommentStatus.Approved))
-                    .ThenInclude(r => r.Replies
-                        .Where(r2 => r2.Status == CommentStatus.Approved))
-                        .ThenInclude(r2 => r2.Replies
-                            .Where(r3 => r3.Status == CommentStatus.Approved))
-                            .ThenInclude(r3 => r3.Replies
-                                .Where(r4 => r4.Status == CommentStatus.Approved))
-                .OrderByDescending(c => c.Created)
-                .ToListAsync();
-        }
-
-        // Alternative approach using explicit loading for truly recursive scenarios
-        public async Task<Comment> GetCommentThreadWithExplicitLoadingAsync(int commentId)
-        {
-            var comment = await _dbContext.Comments
-                .FirstOrDefaultAsync(c => c.Id == commentId && c.Status == CommentStatus.Approved);
-
-            if (comment != null)
+            if (comment.ParentCommentId.HasValue
+                && lookup.TryGetValue(comment.ParentCommentId.Value, out var parent))
             {
-                await LoadRepliesRecursivelyAsync(comment);
+                parent.Replies.Add(comment);
             }
-
-            return comment;
-        }
-
-        // Helper method for explicit loading of replies
-        private async Task LoadRepliesRecursivelyAsync(Comment comment, int maxDepth = 5)
-        {
-            if (maxDepth <= 0) return;
-
-            // Explicitly load the replies for this comment
-            await _dbContext.Entry(comment)
-                .Collection(c => c.Replies)
-                .Query()
-                .Where(r => r.Status == CommentStatus.Approved)
-                .OrderByDescending(r => r.Created)
-                .LoadAsync();
-
-            // Recursively load replies for each child comment
-            foreach (var reply in comment.Replies)
+            else
             {
-                await LoadRepliesRecursivelyAsync(reply, maxDepth - 1);
+                roots.Add(comment);
             }
         }
+
+        return roots;
+    }
+
+    /// <summary>
+    /// Fetch a single comment with its full reply subtree.
+    /// </summary>
+    public async Task<Comment?> GetWithRepliesAsync(int commentId, CancellationToken ct = default)
+    {
+        return await _context.Comments
+            .Where(c => c.Id == commentId)
+            .Include(c => c.Replies.Where(r => r.Status != CommentStatus.Deleted))
+                .ThenInclude(r => r.Replies.Where(r2 => r2.Status != CommentStatus.Deleted))
+                    .ThenInclude(r2 => r2.Replies)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(ct);
+    }
+
+    public async Task<Comment> AddAsync(Comment comment, CancellationToken ct = default)
+    {
+        // Auto-compute TreeLevel from parent
+        if (comment.ParentCommentId.HasValue)
+        {
+            var parent = await _context.Comments
+                .Select(c => new { c.Id, c.TreeLevel })
+                .FirstOrDefaultAsync(c => c.Id == comment.ParentCommentId, ct);
+
+            comment.TreeLevel = (parent?.TreeLevel ?? 0) + 1;
+        }
+        else
+        {
+            comment.TreeLevel = 0;
+        }
+
+        _context.Comments.Add(comment);
+        await _context.SaveChangesAsync(ct);
+        return comment;
+    }
+
+    public async Task UpdateAsync(Comment comment, CancellationToken ct = default)
+    {
+        comment.Edited = true;
+        _context.Comments.Update(comment);
+        await _context.SaveChangesAsync(ct);
+    }
+
+    /// <summary>
+    /// Soft delete — marks the comment as Deleted without removing the row,
+    /// so child replies remain structurally intact.
+    /// </summary>
+    public async Task SoftDeleteAsync(int commentId, CancellationToken ct = default)
+    {
+        var comment = await _context.Comments.FindAsync(commentId, ct);
+        if (comment is null) return;
+
+        comment.Status = CommentStatus.Deleted;
+        comment.Details = "[comment removed]"; // scrub content
+        await _context.SaveChangesAsync(ct);
     }
 }
