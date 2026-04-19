@@ -3,7 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using lovedmemory.Infrastructure.Data;
 using lovedmemory.domain.Entities;
-using lovedmemory.Domain.Entities.Other;
+using PermissionEntity = lovedmemory.Domain.Entities.Other.Permission;
+using RolePermissionEntity = lovedmemory.Domain.Entities.Other.RolePermission;
 using lovedmemory.application.Common.Security.Permissions;
 
 namespace lovedmemory.Infrastructure.Persistence;
@@ -119,7 +120,7 @@ public class AppDbContextInitialiser
         {
             if (!_context.Permissions.Any(p => p.Name == name))
             {
-                _context.Permissions.Add(new Permission
+                _context.Permissions.Add(new PermissionEntity
                 {
                     Name = name,
                     Desc = description
@@ -157,7 +158,7 @@ public class AppDbContextInitialiser
                     .AnyAsync(rp => rp.RoleId == adminRole.Id && rp.PermissionId == permissionId);
                 if (!exists)
                 {
-                    _context.RolePermissions.Add(new RolePermission
+                    _context.RolePermissions.Add(new RolePermissionEntity
                     {
                         RoleId = adminRole.Id,
                         PermissionId = permissionId
@@ -190,7 +191,7 @@ public class AppDbContextInitialiser
                         .AnyAsync(rp => rp.RoleId == userRoleEntity.Id && rp.PermissionId == permission.Id);
                     if (!exists)
                     {
-                        _context.RolePermissions.Add(new RolePermission
+                        _context.RolePermissions.Add(new RolePermissionEntity
                         {
                             RoleId = userRoleEntity.Id,
                             PermissionId = permission.Id
