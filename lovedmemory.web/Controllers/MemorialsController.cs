@@ -31,6 +31,14 @@ namespace lovedmemory.web.Controllers
         {
             return await _memorialservice.GetMemorials();
         }
+
+        [HttpGet("search")]
+        public async Task<IEnumerable<MemorialDto>> Search([FromQuery] string q)
+        {
+            if (string.IsNullOrWhiteSpace(q))
+                return new List<MemorialDto>();
+            return await _memorialservice.SearchMemorials(q);
+        }
         // GET: api/<MemorialsController>
         [HttpGet("myMemorials/{userId}")]
         public async Task<IEnumerable<MemorialDto>> GetMyMemorials(string userId)

@@ -11,6 +11,11 @@ class ExtraDetailsConfig
         extraDetailsConfiguration.ToTable("extra_details", "lovedmemory");
 
         extraDetailsConfiguration.HasKey(e=>e.MemorialId);
+        extraDetailsConfiguration.Property(e => e.Relationship).HasConversion<string>().HasMaxLength(20);
+        extraDetailsConfiguration.Property(e => e.Species).HasMaxLength(50);
+        extraDetailsConfiguration.Property(e => e.Breed).HasMaxLength(50);
+        extraDetailsConfiguration.Property(e => e.Color).HasMaxLength(50);
+        extraDetailsConfiguration.Property(e => e.MicrochipNumber).HasMaxLength(50);
 
 
     }

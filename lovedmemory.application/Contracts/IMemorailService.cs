@@ -15,5 +15,6 @@ namespace lovedmemory.application.Contracts
         Task<IEnumerable<MemorialDto>?> GetMyMemorials(string userId);
         Task<Result<bool>> PostMemorial(CreateMemorialDto Memorial, CancellationToken cancellationToken);
         Task<Memorial?> PutMemorial(int id, Memorial _Memorial, CancellationToken cancellationToken);
+        Task<IEnumerable<MemorialDto>> SearchMemorials(string query);
     }
 }

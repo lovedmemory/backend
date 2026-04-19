@@ -67,39 +67,44 @@ namespace lovedmemory.application.Services
                          .Include(t => t.CreatedByUser)
                          .Include(t => t.Comments)
                          .ThenInclude(c => c.Replies)
-                         .Select(t => new MemorialDto
-                         {
-                             Id = t.Id,
-                             Name = t.FullName(),
-                             Description = t.Description,
-                             Title = t.Title,
-                             RunDate = t.RunDate,
-                             Created = t.Created,
-                             Active = t.Active,
-                             Dob = (DateOnly)t.ExtraDetails.DateOfBirth,
-                             Dod = (DateOnly)t.ExtraDetails.DateOfDeath,
-                             ImageUrl = t.MainImageUrl,
-                             CommemorationDate = t.ExtraDetails.CommemorationDate,
-                             Slug = t.Slug,
-                             PersonalPhrase = t.PersonalPhrase,
-                             Biography = t.Biography,
-                             FirstName = t.FirstName,
-                             LastName = t.LastName,
-                             NickName = t.ExtraDetails.NickName,
-                             ViewCount = t.ViewCount,
-                             AuthorName = t.CreatedByUser.FullName,
-                             AuthorEmail = t.CreatedByUser.Email!,
-                             Published = t.Published,
-                             Comments = t.Comments.Select(c => new Comment
-                             {
-                                 Id = c.Id,
-                                 Details = c.Details,
-                                 Created = c.Created,
-                                 Name = c.Name,
-                                 CreatedByUserId = c.CreatedByUserId,
-                                 Replies = GetAllReplies(c.Replies).ToList()
-                             }).ToList()
-                         }).FirstOrDefaultAsync();
+                          .Select(t => new MemorialDto
+                          {
+                              Id = t.Id,
+                              Name = t.FullName(),
+                              Description = t.Description,
+                              Title = t.Title,
+                              RunDate = t.RunDate,
+                              Created = t.Created,
+                              Active = t.Active,
+                              Dob = (DateOnly)t.ExtraDetails.DateOfBirth,
+                              Dod = (DateOnly)t.ExtraDetails.DateOfDeath,
+                              ImageUrl = t.MainImageUrl,
+                              CommemorationDate = t.ExtraDetails.CommemorationDate,
+                              Slug = t.Slug,
+                              PersonalPhrase = t.PersonalPhrase,
+                              Biography = t.Biography,
+                              FirstName = t.FirstName,
+                              LastName = t.LastName,
+                              NickName = t.ExtraDetails.NickName,
+                              ViewCount = t.ViewCount,
+                              AuthorName = t.CreatedByUser.FullName,
+                              AuthorEmail = t.CreatedByUser.Email!,
+                              Published = t.Published,
+                              MemorialType = t.MemorialType,
+                              Species = t.ExtraDetails.Species,
+                              Breed = t.ExtraDetails.Breed,
+                              Color = t.ExtraDetails.Color,
+                              MicrochipNumber = t.ExtraDetails.MicrochipNumber,
+                              Comments = t.Comments.Select(c => new Comment
+                              {
+                                  Id = c.Id,
+                                  Details = c.Details,
+                                  Created = c.Created,
+                                  Name = c.Name,
+                                  CreatedByUserId = c.CreatedByUserId,
+                                  Replies = GetAllReplies(c.Replies).ToList()
+                              }).ToList()
+                          }).FirstOrDefaultAsync();
 
             if (memorial != null)
             {
@@ -144,7 +149,7 @@ namespace lovedmemory.application.Services
                   FirstName = t.FirstName,
                   LastName = t.LastName,
                   Created = t.Created,
-                  Published = t.Published,  
+                  Published = t.Published,
                   CommemorationDate = t.ExtraDetails.CommemorationDate,
                   Slug = t.Slug,
                   Active = t.Active,
@@ -155,6 +160,11 @@ namespace lovedmemory.application.Services
                   Dob = (DateOnly)t.ExtraDetails.DateOfBirth,
                   Dod = (DateOnly)t.ExtraDetails.DateOfDeath,
                   PersonalPhrase = t.PersonalPhrase,
+                  MemorialType = t.MemorialType,
+                  Species = t.ExtraDetails.Species,
+                  Breed = t.ExtraDetails.Breed,
+                  Color = t.ExtraDetails.Color,
+                  MicrochipNumber = t.ExtraDetails.MicrochipNumber,
               })
               .ToListAsync();
         }
@@ -199,6 +209,11 @@ namespace lovedmemory.application.Services
                     ViewCount = t.ViewCount,
                     AuthorName = t.CreatedByUser.FullName,
                     AuthorEmail = t.CreatedByUser.Email,
+                    MemorialType = t.MemorialType,
+                    Species = t.ExtraDetails.Species,
+                    Breed = t.ExtraDetails.Breed,
+                    Color = t.ExtraDetails.Color,
+                    MicrochipNumber = t.ExtraDetails.MicrochipNumber,
                     Comments = t.Comments.Select(c => new Comment
                     {
                         Id = c.Id,
@@ -241,12 +256,13 @@ namespace lovedmemory.application.Services
                     PersonalPhrase = Memorial.PersonalPhrase,
                     Published = Memorial?.Published ?? false,
                     Title = "Memorial for " + Memorial.FirstName + " " + Memorial.LastName,
-                    Slug = _slug,   
+                    Slug = _slug,
                     Gender = (char)Memorial.Gender,
+                    MemorialType = Memorial.MemorialType,
                     Biography = Memorial.Biography,
                     Description = Memorial.Description,
                     IsPrivate = Memorial.Privacy,
-                    Template = "default",
+                    Template = Memorial.MemorialType == MemorialType.Pet ? "pet" : "default",
                     MainImageUrl = Memorial.ImageUrl,
                     ViewCount=0,
                     CreatedByUserId = createdByUserId
@@ -258,6 +274,11 @@ namespace lovedmemory.application.Services
                     MemorialId = _Memorial.Id,
                     DateOfBirth = string.IsNullOrEmpty(Memorial.Dob) ? null : DateOnly.FromDateTime(DateTime.Parse(Memorial.Dob)),
                     DateOfDeath = string.IsNullOrEmpty(Memorial.Dod) ? null : DateOnly.FromDateTime(DateTime.Parse(Memorial.Dod)),
+                    CommemorationDate = Memorial.CommemorationDate,
+                    Species = Memorial.Species,
+                    Breed = Memorial.Breed,
+                    Color = Memorial.Color,
+                    MicrochipNumber = Memorial.MicrochipNumber
                 };
                 _context.ExtraDetails.Add(_extraDetails);
                 await _context.SaveChangesAsync(cancellationToken);
@@ -344,6 +365,27 @@ namespace lovedmemory.application.Services
             await _context.SaveChangesAsync(cancellationToken);
 
             return true;
+        }
+
+        public async Task<IEnumerable<MemorialDto>> SearchMemorials(string query)
+        {
+            return await _context.Memorials
+                .Where(m => m.Active && m.Published && !m.IsPrivate &&
+                            (m.FirstName.Contains(query) || m.LastName.Contains(query) || m.Title.Contains(query)))
+                .Include(m => m.CreatedByUser)
+                .Include(m => m.ExtraDetails)
+                .Select(m => new MemorialDto
+                {
+                    Id = m.Id,
+                    Name = m.FullName(),
+                    Title = m.Title,
+                    ImageUrl = m.MainImageUrl,
+                    Slug = m.Slug,
+                    MemorialType = m.MemorialType,
+                    Species = m.ExtraDetails.Species,
+                    Breed = m.ExtraDetails.Breed
+                })
+                .ToListAsync();
         }
 
     }

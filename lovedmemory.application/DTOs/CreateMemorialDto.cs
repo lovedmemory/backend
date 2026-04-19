@@ -14,13 +14,18 @@ namespace lovedmemory.application.DTOs
         public string? Dob { get; set; }
         public string? Dod { get; set; }
         public char? Gender { get; set; } = 'U';
+        public MemorialType MemorialType { get; set; } = MemorialType.Person;
         public bool Privacy { get; set; }
         public DateTimeOffset? RunDate { get; set; }
         public bool Published { get; set; }
         public string? Slug { get; set; }
         public string? Email { get; set; }
         public DateOnly? CommemorationDate { get; set; }
-
+        // Pet-specific fields
+        public string? Species { get; set; }
+        public string? Breed { get; set; }
+        public string? Color { get; set; }
+        public string? MicrochipNumber { get; set; }
 
     }
 }

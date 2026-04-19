@@ -15,5 +15,6 @@ class MemorialConfig
         MemorialConfig.HasOne(t => t.ExtraDetails).WithOne().HasForeignKey<ExtraDetails>(e=>e.MemorialId).OnDelete(DeleteBehavior.Cascade);
         MemorialConfig.HasOne(t => t.CoverPhoto).WithOne(e => e.Memorial).HasForeignKey<CoverPhoto>(e => e.MemorialId).OnDelete(DeleteBehavior.Cascade);
         MemorialConfig.Property(m=>m.Description).HasMaxLength(500);
+        MemorialConfig.Property(m => m.MemorialType).HasConversion<string>().HasMaxLength(20);
     }
 }

@@ -14,6 +14,7 @@ namespace lovedmemory.domain.Entities
         public string? OtherNames { get; set; }
         public string? Biography { get; set; }
         public char Gender { get; set; }
+        public MemorialType MemorialType { get; set; }
         public string Slug { get; set; }
         public string Template { get; set; }
         public string? MainImageUrl { get; set; }
@@ -25,12 +26,18 @@ namespace lovedmemory.domain.Entities
         public bool IsPrivate { get; set; }
         public CoverPhoto? CoverPhoto { get; set; }
         public virtual IList<Comment> Comments { get; set; } = [];
-        public virtual ExtraDetails ExtraDetails { get; set; } 
+        public virtual ExtraDetails ExtraDetails { get; set; }
         public virtual IList<Gallery> Gallery { get; set; } = [];
         public virtual IList<Audio>? Audios { get; set; } = [];
-        public virtual LifeStory? LifeStory { get; set; } 
-        
-        
+        public virtual LifeStory? LifeStory { get; set; }
+
+
+    }
+
+    public enum MemorialType
+    {
+        Person,
+        Pet
     }
     public class MemorialBuilder 
     {
