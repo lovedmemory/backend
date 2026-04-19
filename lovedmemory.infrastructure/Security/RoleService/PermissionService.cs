@@ -1,11 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using lovedmemory.Domain.Entities.Other;
-using lovedmemory.application.Common.Interfaces;
-using lovedmemory.Infrastructure.Data;
+﻿using lovedmemory.application.Common.Interfaces;
 using lovedmemory.application.DTOs;
+using lovedmemory.Domain.Entities.Other;
+using lovedmemory.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
-namespace lovedmemory.Application.Services
+namespace lovedmemory.infrastructure.Security.RoleService
 {
     public class PermissionService : IPermissionService
     {
@@ -17,42 +17,14 @@ namespace lovedmemory.Application.Services
             _logger = logger;
         }
 
-        public async Task<IEnumerable<Permission>> GetAllPermissions()
+        public async Task<IEnumerable<Permission>?> GetAllPermissions()
         {
-            if (_context.Permissions == null)
-            {
-                return null;
-            }
-            return await _context.Permissions
+            return _context.Permissions == null
+                ? null
+                : (IEnumerable<Permission>)await _context.Permissions
 
                 .ToListAsync();
         }
-        //public async Task<IEnumerable<Permission>?> GetPermissions(int Id)
-        //{
-        //    if (_context.Permissions == null)
-        //    {
-        //        return null;
-        //    }
-        //    return await _context.Permissions.Where(s => s.Id == Id)
-        //        .Include(t=>t.Departments)
-        //        .Select(t=>new Permission
-        //        {
-        //            Id = t.Id,
-        //            FullName = t.GetFullName(),
-        //            Salutation = t.Salutation,
-        //            ImageUrl = t.Image,
-        //            Email = t.Email,
-        //            Gender = t.Gender,
-        //            Phone   = t.Phone,
-        //            SchoolId    = t.SchoolId,
-        //            Status  = t.Status,
-        //            RegNo = t.RegNo,
-        //           // Departments = t.Departments.Select(d=>new DepartmentDto{Id=d.Id,DepartmentName=d.DepartmentName}).ToList(),
-        //           // ClassRooms = t.ClassRooms.Select(c=>new ClassRoomDto{ClassRoomId=c.ClassRoomId,ClassroomName=c.ClassroomName}).ToList(),
-
-        //        })
-        //        .ToListAsync();
-        //}
 
         public async Task<Permission?> GetPermission(int id)
         {
@@ -60,7 +32,7 @@ namespace lovedmemory.Application.Services
             {
                 return null;
             }
-            var permission = await _context.Permissions.Where(t => t.Id == id)
+            Permission? permission = await _context.Permissions.Where(t => t.Id == id)
 
 
                 .FirstOrDefaultAsync();
@@ -78,7 +50,7 @@ namespace lovedmemory.Application.Services
 
             try
             {
-                var existingPermission = await _context.Permissions.FindAsync([id], cancellationToken);
+                Permission? existingPermission = await _context.Permissions.FindAsync([id], cancellationToken);
 
                 if (existingPermission == null)
                 {
@@ -87,13 +59,13 @@ namespace lovedmemory.Application.Services
 
                 _context.Permissions.Entry(existingPermission).CurrentValues.SetValues(permission);
 
-                await _context.SaveChangesAsync(cancellationToken);
+                _ = await _context.SaveChangesAsync(cancellationToken);
 
                 return existingPermission;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error updating school");
+                _logger.LogError(ex, "Error updating permission");
                 return null;
             }
         }
@@ -104,13 +76,13 @@ namespace lovedmemory.Application.Services
             {
                 return false;
             }
-            var newPermission = new Permission
+            Permission newPermission = new()
             {
                 Name = permission.Name,
                 Desc = permission.Desc
             };
-            _context.Permissions.Add(newPermission);
-            await _context.SaveChangesAsync(cancellationToken);
+            _ = _context.Permissions.Add(newPermission);
+            _ = await _context.SaveChangesAsync(cancellationToken);
 
             return true;
         }
@@ -121,14 +93,14 @@ namespace lovedmemory.Application.Services
             {
                 return false;
             }
-            var Permission = await _context.Permissions.FindAsync(id);
+            Permission? Permission = await _context.Permissions.FindAsync(id);
             if (Permission == null)
             {
                 return true;
             }
 
-            _context.Permissions.Remove(Permission);
-            await _context.SaveChangesAsync(cancellationToken);
+            _ = _context.Permissions.Remove(Permission);
+            _ = await _context.SaveChangesAsync(cancellationToken);
 
             return true;
         }
